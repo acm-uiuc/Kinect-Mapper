@@ -27,7 +27,7 @@ float uL = 0.0, uR = 0.0; //control inputs for each wheel
 float vRefL = 0.0, vRefR = 0.0; //desired velocity for each wheel
 float integralL = 0.0, integralR = 0.0; //integral for controls of velocity
 float differentialL = 0.0, differentialR = 0.0; //differential for controls of velocity
-float KpTurn = 3.0; //control gain from the coupling and turning
+float KpTurn = .5; //control gain from the coupling and turning
 float turn = 0.0; //turn control input
 float errorSteering = 0.0; //error input for the coupling
 
@@ -59,7 +59,7 @@ void loop()
 {
     vRefL = .15;
     vRefR = .15;
-    turn = 0.0;
+    turn = -0.025;
 
     timeDifference = millis() - previousVelocityTime;
     if(timeDifference > 50){ previousVelocityTime = millis();
@@ -82,7 +82,7 @@ void loop()
     // left motor control
     errorL = vRefL - velL + errorSteering;
     integralL += (errorL + errorLprev) * .0005 * timeDifference;
-    differentialL = (errorL - errorLprev) / timeDifference;
+    //differentialL = (errorL - errorLprev) / timeDifference;
     //Serial.println(errorLprev);
     errorLprev = errorL;
     //uL = (Kp * errorL) + (Ki * integralL) + (Kd * differentialL);
@@ -102,7 +102,7 @@ void loop()
     // right motor control
     errorR = vRefR - velR - errorSteering;
     integralR += (errorR + errorRprev) * .0005 * timeDifference;
-    differentialR = (errorR - errorRprev) / timeDifference;
+    //differentialR = (errorR - errorRprev) / timeDifference;
     //Serial.println(errorRprev);
     errorRprev = errorR;
     //uR = (Kp * errorR) + (Ki * integralR) + (Kd * differentialR);
