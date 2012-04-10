@@ -1,13 +1,15 @@
 #include <Servo.h>
 
-#define SERVO_LEFT_PIN 11
-#define SERVO_RIGHT_PIN 9
-#define LEFT_WHEEL 1
-#define RIGHT_WHEEL 0
+#define SERVO_LEFT_PIN 9
+#define SERVO_RIGHT_PIN 11
+#define LEFT_WHEEL 0
+#define RIGHT_WHEEL 1
 
 #define SERVO_FORWARD 180
 #define SERVO_STOP 90
 #define SERVO_BACKWARDS 0
+
+#define LENGTH 18.25f
 
 Servo servo_left;
 Servo servo_right;
@@ -19,7 +21,7 @@ long timeDifference = 0;
 long int ldcprev = 0;
 long int rdcprev = 0; //previous count numbers for turns
 
-float Kp = 20.0, Ki = 25.0, Kd = 10.0; //control gains
+float Kp = 5.0, Ki = 25.0, Kd = 10.0; //control gains
 float velL = 0.0, velR = 0.0;  //velocity of each wheel
 float errorL = 0.0, errorR = 0.0; //error for controls
 float errorLprev = 0.0, errorRprev = 0.0; //error for controls
@@ -27,9 +29,11 @@ float uL = 0.0, uR = 0.0; //control inputs for each wheel
 float vRefL = 0.0, vRefR = 0.0; //desired velocity for each wheel
 float integralL = 0.0, integralR = 0.0; //integral for controls of velocity
 float differentialL = 0.0, differentialR = 0.0; //differential for controls of velocity
-float KpTurn = .5; //control gain from the coupling and turning
+float KpTurn = 3.0; //control gain from the coupling and turning
 float turn = 0.0; //turn control input
 float errorSteering = 0.0; //error input for the coupling
+
+float angle = 0.0; // angled turned so far
 
 void setup()
 {
@@ -57,9 +61,11 @@ void rdist_count()
 
 void loop()
 {
+    if (Serial.available() > 0)
+        turn = ((float) Serial.read() - 128) / 500.f;
+
     vRefL = .15;
     vRefR = .15;
-    turn = -0.025;
 
     timeDifference = millis() - previousVelocityTime;
     if(timeDifference > 50){ previousVelocityTime = millis();
@@ -69,12 +75,9 @@ void loop()
 
     errorSteering = KpTurn * (velR - velL + turn);
 
-
-/*
-    Serial.print(ldc);Serial.print(" ");Serial.print(ldcprev);Serial.print(" ");Serial.println(ldc-ldcprev);
-    Serial.print(rdc);Serial.print(" ");Serial.print(rdcprev);Serial.print(" ");Serial.println(rdc-rdcprev);
-    Serial.println(timeDifference);
-*/
+    // angle = (velL - velR) * (time passed) / (distance between wheels)
+    // magic number converts clicks to inches
+    angle += 0.037f * ((ldc - ldcprev) - (rdc - rdcprev)) / LENGTH;
 
     ldcprev = ldc;
     rdcprev = rdc;
@@ -82,7 +85,7 @@ void loop()
     // left motor control
     errorL = vRefL - velL + errorSteering;
     integralL += (errorL + errorLprev) * .0005 * timeDifference;
-    //differentialL = (errorL - errorLprev) / timeDifference;
+    differentialL = (errorL - errorLprev) / timeDifference;
     //Serial.println(errorLprev);
     errorLprev = errorL;
     //uL = (Kp * errorL) + (Ki * integralL) + (Kd * differentialL);
@@ -102,7 +105,7 @@ void loop()
     // right motor control
     errorR = vRefR - velR - errorSteering;
     integralR += (errorR + errorRprev) * .0005 * timeDifference;
-    //differentialR = (errorR - errorRprev) / timeDifference;
+    differentialR = (errorR - errorRprev) / timeDifference;
     //Serial.println(errorRprev);
     errorRprev = errorR;
     //uR = (Kp * errorR) + (Ki * integralR) + (Kd * differentialR);
@@ -119,31 +122,19 @@ void loop()
         integralR *= .95; 
     }
 
-//if((millis()%20) == 0){
-
-    //servo_right.write(103);
-    //servo_left.write(103);
     servo_right.write(90 + (int) uR);
     servo_left.write(90 - (int) uL);
-//}
 
 
-//if((millis() % 50 )== 0){
     Serial.print(uL);Serial.print(" ");
     Serial.print(ldcprev);Serial.print(" ");
     Serial.print(velL);Serial.print(" ");
-    //Serial.print(errorL);Serial.print(" ");
-    //Serial.print(integralL);Serial.print(" ");
-    //Serial.println(differentialL);
 
     Serial.print(uR);Serial.print(" ");
     Serial.print(rdcprev);Serial.print(" ");
-    Serial.println(velR);Serial.print(" ");
-    //Serial.print(errorR);Serial.print(" ");
-    //Serial.println(integralR);Serial.print(" ");
-    //Serial.println(differentialR);
+    Serial.print(velR);Serial.print(" ");
 
-    //Serial.println(); Serial.println();
-//}
+    Serial.println(angle);
+
     }
 }
