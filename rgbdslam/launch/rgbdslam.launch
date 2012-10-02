@@ -1,0 +1,25 @@
+<launch>
+  <node pkg="rgbdslam" type="rgbdslam" name="rgbdslam" cwd="node" required="false" output="log" > 
+    <!-- see rgbslam_sample_config.launch for all available parameters and their default values -->
+      <param name="config/topic_image_mono"              value="/camera/rgb/image_color"/>
+      <param name="config/wide_topic"                    value=""/>;
+      <param name="config/wide_cloud_topic"              value=""/>;
+      <param name="config/drop_async_frames"             value="true"/> <!-- Check association of depth and visual image, reject if not in sync -->
+      <param name="config/feature_detector_type"         value="SIFTGPU"/><!-- If SIFTGPU is enabled in CMakeLists.txt, use SURF here -->
+      <param name="config/feature_extractor_type"        value="SIFTGPU"/><!-- If SIFTGPU is enabled in CMakeLists.txt, use SURF here -->
+      <param name="config/matcher_type"                  value="SIFTGPU"/> <!-- FLANN (not avail for ORB features), SIFTGPU (only for SIFTGPU detector)  or BRUTEFORCE-->
+      <param name="config/max_keypoints"                 value="2000"/><!-- Extract no more than this many keypoints (not honored by SIFTGPU)-->
+      <param name="config/min_keypoints"                 value="1600"/><!-- Extract no less than this many ... -->
+      <param name="config/optimizer_skip_step"           value="1"/><!-- optimize every n-th frame -->
+      <param name="config/store_pointclouds"             value="false"/> <!-- if, e.g., only trajectory is required, setting this to false saves lots of memory -->
+      <param name="config/individual_cloud_out_topic"    value="/rgbdslam/batch_clouds"/>;
+      <param name="/config/use_gui" value="true"/>
+    <param name="config/visualization_skip_step"       value="1"/> <!-- draw only every nth pointcloud row and line, high values require higher squared_meshing_threshold -->
+    <param name="config/sufficient_matches"            value="400"/><!-- Instead of matching all new descriptors against all of a previous node in one step, sufficient_matches+100 of the new descriptors are iteratively compared to all of the previous node until sufficient_matches are found. Setting this parameter low (e.g. 2x min_matches) speeds up comparisons of frames with many matches, but with a potential loss of accuracy, as the transformation is estimated from less features. Set it to max_keypoints for maximum accuracy -->
+    <param name="config/max_connections"               value="15"/><!-- stop after this many succesfully found spation relations -->
+    <param name="config/predecessor_candidates"        value="5"/><!-- search through this many immediate predecessor nodes for corrspondences -->
+    <param name="config/neighbor_candidates"           value="5"/><!-- search through this many graph neighbour nodes for corrspondences -->
+    <param name="config/min_sampled_candidates"        value="5"/><!-- search through this many uniformly sampled nodes for corrspondences -->
+    <!-- see rgbslam_sample_config.launch for all available parameters and their default values -->
+  </node>
+</launch>
