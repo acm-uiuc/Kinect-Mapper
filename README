@@ -1,0 +1,13 @@
+Getting the robot to move:
+
+1. Obtain copies of client.py, server.py and kinmap.pde (if not already on the arduino)
+
+2. If you do not have pygame, type 'sudo apt-get install python-pygame' to install.
+
+3. Connect your computer to the arduino via USB.
+
+4. Open terminal. Type 'python server.py'
+
+5. Open a second terminal. Type 'python client.py 127.0.01 12345' The first argument is the ip of the computer on which server.py is running, the second is the port on which you wish to connect (both can be modified in server.py). This allows the server and client to be run on different computers.
+
+This should be suffice in terms of setup. Use arrows to move the robot, 'j' to slow down, 'k' to accelerate, and 's' to stop.

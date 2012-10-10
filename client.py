@@ -23,17 +23,17 @@ cs = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 cs.connect((HOST, PORT))
 
 
-speed = 16
+speed = 8
 done = False
 while not done:
     for event in pygame.event.get():
         clock.tick(60)
 
         if event.type == JOYBUTTONUP:
-          cs.send("stop\n")
+          cs.send("stp\n")
 
         if event.type == KEYUP:
-            if event.key in [K_KP8, K_KP2, K_KP4, K_KP6]:
+            if event.key in [K_KP8, K_KP2, K_KP4, K_KP6, K_s]:
                 cs.send("stop\n")
 
         elif event.type == KEYDOWN:
@@ -51,14 +51,14 @@ while not done:
           cs.send("stop\n")
 
 
-        if (event.type == JOYBUTTONDOWN and event.button == 3):
+        if ((event.type == JOYBUTTONDOWN and event.button == 3) or (event.type == KEYDOWN and event.key == K_UP)):
           cs.send("ahead " + repr(speed) + "\n")
 
-        if (event.type == JOYBUTTONDOWN and event.button == 0):
+        if ((event.type == JOYBUTTONDOWN and event.button == 0) or (event.type == KEYDOWN and event.key == K_DOWN)):
           cs.send("ahead " + repr(-speed)+ "\n")
 
-        if (event.type == JOYBUTTONDOWN and event.button == 1):
+        if ((event.type == JOYBUTTONDOWN and event.button == 1) or (event.type == KEYDOWN and event.key == K_RIGHT)):
           cs.send("turn " + repr(speed)  + "\n")
 
-        if (event.type == JOYBUTTONDOWN and event.button == 2):
+        if ((event.type == JOYBUTTONDOWN  and event.button == 2) or (event.type == KEYDOWN and event.key == K_LEFT)):
           cs.send("turn " + repr(-speed) + "\n")
