@@ -7,3 +7,17 @@
  ***********************************************************************/
 
 #include "kinect_interface.h"
+
+KinectInter::KinectInter()
+{
+  //TODO: initialize camera
+}
+
+KinectInter::~KinectInter()
+{
+}
+
+FrameData* KinectInter::getFrame()
+{
+  //TODO: Access camera and return the RGBD data
+}

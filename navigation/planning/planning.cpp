@@ -6,3 +6,21 @@
  ************************************************************************
  ***********************************************************************/
 #include "planning.h"
+
+
+MapperPathPlanner::MapperPathPlanner()
+{
+
+}
+
+MapperPathPlanner::~MapperPathPlanner()
+{
+
+}
+
+void* MapperPathPlanner::getNextCommand()
+{
+  //TODO: implement planning algorithim, will need to change return
+  // type
+  return NULL;
+}

@@ -7,6 +7,17 @@
  ***********************************************************************/
 
 #ifndef PLANNING_H
-#def PLANNING_H
+#define PLANNING_H
+
+#include "navigation.h"
+
+class MapperPathPlanner
+{
+ public:
+  MapperPathPlanner();
+  ~MapperPathPlanner();
+  void* getNextCommand();
+ protected:
+};
 
 #endif

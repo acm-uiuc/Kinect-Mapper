@@ -7,6 +7,18 @@
  ***********************************************************************/
 
 #ifndef KINECT_INTERFACE_H
-#def KINECT_INTERFACE_H
+#define KINECT_INTERFACE_H
+
+#include "navigation.h"
+
+class KinectInter
+{
+ public:
+  KinectInter();
+  ~KinectInter();
+  FrameData* getFrame();
+ protected:
+  //Add any members needed to access the kinect
+};
 
 #endif

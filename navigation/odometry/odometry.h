@@ -7,26 +7,19 @@
  ***********************************************************************/
 
 #ifndef ODOMETRY_H
-#def ODOMETRY_H
+#define ODOMETRY_H
 
+#include "navigation.h"
 #include <fovis/fovis.hpp>
-
-stuct OdomTrans 
-{
-  // Translation
-  double x,y,z;
-  // Euler Angles
-  double alpha,beta,gamma;
-}
 
 class RGBDVisOdometry
 {
  public:
   RGBDVisOdometry();
   ~RGBDVisOdometry();
-  void getTransformation(OdomTrans& trans);
+  void getTransformation(FrameData* prevFrame, FrameData* currFrame);
  protected:
-  fovis::VisualOdometry  Odom_;
-}
+  fovis::VisualOdometry*  Odom_;
+};
 
 #endif

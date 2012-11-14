@@ -18,7 +18,13 @@ RGBDVisOdometry::~RGBDVisOdometry()
   
 }
 
-void RGBDVisOdometry::getTransformation(OdomTrans& trans)
+/*************************************************************
+ *
+ * prevFrame is NULL when it is the first frame
+ *
+ ***********************************************************/
+void RGBDVisOdometry::getTransformation(FrameData* prevFrame, 
+					FrameData* currFrame)
 {
   /*TODO: implement a method that will relate the previous frame
     to the current one.*/
