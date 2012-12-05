@@ -67,7 +67,8 @@ private:
 	}
 
 	TreeNode * getNode(Quadrant * current_quadrant_lengths, int x, int y, TreeNode * node) {
-		assert(current_quadrant_lengths->x1 <= x && current_quadrant_lengths->x2 >= x && current_quadrant_lengths->y1 <= y && current_quadrant_lengths->y2 >= y);
+		assert(current_quadrant_lengths->x1 <= x && current_quadrant_lengths->x2 >= x 
+		       && current_quadrant_lengths->y1 <= y && current_quadrant_lengths->y2 >= y);
 		int quadrant_half_x = (current_quadrant_lengths->x2 + 1) / 2;
 		int quadrant_half_y = (current_quadrant_lengths->y2 + 1) / 2;
 		if (!doesNodeHaveAllChildren(node)) {
