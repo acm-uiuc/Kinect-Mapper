@@ -10,14 +10,17 @@
 #define ODOMETRY_H
 
 #include "navigation.h"
+#include "../utilities/kinect_interface.h"
 #include <fovis/fovis.hpp>
 
 class RGBDVisOdometry
 {
  public:
-  RGBDVisOdometry();
+  RGBDVisOdometry(const KinectInter& camera);
   ~RGBDVisOdometry();
-  void getTransformation(FrameData* prevFrame, FrameData* currFrame);
+  OdomTrans& getMotionEstimate(FrameData* currFrame = NULL);
+  OdomTrans& getPose(FrameData* currFrame = NULL);
+  OdomTrans& Isometry3DToOdomTrans(Eigen::Isometry3d odomInfo);
  protected:
   fovis::VisualOdometry*  Odom_;
 };

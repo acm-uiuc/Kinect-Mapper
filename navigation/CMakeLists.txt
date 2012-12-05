@@ -9,7 +9,7 @@ cmake_minimum_required(VERSION 2.6.0)
 #find_package(fovis REQUIRED )
 find_package(EIGEN REQUIRED eigen3)
 
-include_directories(${PROJECT_SOURCE_DIR} ${EIGEN_INCLUDE_DIRS})
+include_directories(${PROJECT_SOURCE_DIR} ${EIGEN_INCLUDE_DIRS} ${PROJECT_SOURCE_DIR}/utilitites)
 
 # build the main library
 add_library(VisualNav SHARED
