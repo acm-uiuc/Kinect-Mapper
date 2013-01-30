@@ -1,0 +1,18 @@
+server.cpp
+- accepts directional commands from client.cpp
+- sends commands to arduino
+- connect to arduino (line of code requiring connection to arduino commented out for testing purposes)
+- to make, type 'make server'
+- to run, type './server.out'
+
+client.cpp
+- connects to server.cpp &
+- sends directional commands
+- to make, type 'make client'
+- to run, type './client.out'
+
+
+CONTROL INSTRUCTIONS:
+
+s - Stop			r - turn Right		u - speed Up
+f - Forward			l - turn Left		d - slow Down
