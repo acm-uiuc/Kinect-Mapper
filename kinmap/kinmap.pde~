@@ -1,4 +1,4 @@
-// reference http://bit.ly/VoBkia for X2 encoding
+// reference http://bit.ly/VoBkia
 
 #include <Servo.h>
 
