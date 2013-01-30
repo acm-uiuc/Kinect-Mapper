@@ -1,5 +1,4 @@
 // reference http://bit.ly/VoBkia for X2 encoding
-
 #include <Servo.h>
 
 #define SERVO_LEFT_PIN 9
