@@ -45,10 +45,13 @@ void connection_handler(int serverfd, int acceptfd){
 			continue;
 
 		// ignore garbage
-		for(int i = 0; i < 4; i++){
+		//  1 character for keypress
+		//	3 characters for keybord input (stdin)
+		for(int i = 0; i < 1; i++){
 			while(recv(acceptfd, &garb, 1, 0) != 1)
 				continue;
 		}
+		
 
 		printf("Received message: %c\n", message);
 
