@@ -5,4 +5,13 @@
 
 #include <QEI.h>
 
+void setup()
+{
+  QEI leftWheel (p29, p30, NC, 624);
+  QEI rightWheel (p31, p32, NC, 624);
+}
 
+void loop()
+{
+  
+}
