@@ -1,32 +1,21 @@
-// QuadAVL.cpp : Defines the entry point for the console application.
-//
 
-#include "stdafx.h"
-#include "QuadTree.h"
+
+#include "quadtree.hpp"
 #include <iostream>
+#include <assert.h>
 
-
-int _tmain(int argc, _TCHAR* argv[])
+int main()
 {
-	using namespace std;
-	cout << "begin" << endl;
+  QuadTree<int> testTree = QuadTree<int>();
+  
+  int * x = new int(6);
+  int * y = new int(3);
+  int * z = new int (2);
+  
+  testTree.add_data(x);
+  testTree.add_data(y);
+  assert(testTree.is_in_Tree(y));
+  assert(!testTree.is_in_Tree(z));
 
-	QuadTree<int> tree = QuadTree<int>(8);
-
-	tree.insert(4231, 0, 0);
-
-	cout << (tree.findNode(0, 0))->data << endl;
-
-	tree.resetCoordinate(0, 0);
-
-	cout << (tree.findNode(0, 0))->data << endl;
-
-	tree.insert(37, 5, 4);
-
-	cout << tree.findNode(5, 4)->data << endl;
-
-	cout << "finish" << endl;
-
-	cin.get();
 	return 0;
 }
