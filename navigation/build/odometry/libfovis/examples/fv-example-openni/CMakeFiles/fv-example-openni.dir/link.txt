@@ -1,1 +1,0 @@
-/usr/bin/c++       CMakeFiles/fv-example-openni.dir/main.cpp.o CMakeFiles/fv-example-openni.dir/data_capture.cpp.o  -o ../../../../bin/fv-example-openni -rdynamic -L/home/bplumme2/Desktop/SigBot/Kinect-Mapper/navigation/build/lib -L/usr/local/lib -lOpenNI ../../../../lib/libfovis.so.1 -Wl,-rpath,/home/bplumme2/Desktop/SigBot/Kinect-Mapper/navigation/build/lib:/usr/local/lib: 

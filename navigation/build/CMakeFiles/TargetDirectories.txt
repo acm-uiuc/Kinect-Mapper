@@ -1,2 +1,0 @@
-/home/bplumme2/Desktop/SigBot/Kinect-Mapper/navigation/build/CMakeFiles/KinectMapperNav.dir
-/home/bplumme2/Desktop/SigBot/Kinect-Mapper/navigation/build/CMakeFiles/VisualNav.dir

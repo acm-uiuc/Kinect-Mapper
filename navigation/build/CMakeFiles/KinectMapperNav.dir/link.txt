@@ -1,1 +1,0 @@
-/usr/bin/c++       CMakeFiles/KinectMapperNav.dir/navigation.cpp.o  -o KinectMapperNav -rdynamic libVisualNav.so -Wl,-rpath,/home/bplumme2/Desktop/SigBot/Kinect-Mapper/navigation/build 
