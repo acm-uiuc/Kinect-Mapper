@@ -12,6 +12,8 @@ template <class DATA>
 class QuadTree	{
  public:
 
+enum Direction { North, South, East, West };
+
 struct Tree_Node      {
     DATA * data;
     Tree_Node * North;
@@ -27,17 +29,16 @@ struct Tree_Node      {
   QuadTree(QuadTree * oldTree);
 
   void delete_branch(Tree_Node * deadNode);
-  bool is_in_Tree(DATA * data);
+  bool is_in_tree(DATA * data);
   void add_data(DATA * data);
 
  private:
   void add_data_helper(Tree_Node * subroot, DATA * data);
-  Tree_Node * newNode(DATA * data);
-  void deleteBranch(Tree_Node * deadNode);
-  Tree_Node * node_Deep_Copy(Tree_Node * oldNode);
-  Tree_Node * coppyNode(Tree_Node * oldNode);
+  Tree_Node * new_node(DATA * data);
+  Tree_Node * node_deep_copy(Tree_Node * oldNode);
+  Tree_Node * coppy_node(Tree_Node * oldNode);
 
-  bool is_in_Tree_helper(Tree_Node * sub_root, DATA * data);
+  bool is_in_tree_helper(Tree_Node * sub_root, DATA * data);
   int depth; //how deep is the deepetst part
   int size;
   Tree_Node * head;

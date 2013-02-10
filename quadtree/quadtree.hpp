@@ -24,31 +24,31 @@ QuadTree<DATA>::QuadTree(QuadTree * oldTree)
 }
 
 template <class DATA>
-typename QuadTree<DATA>::Tree_Node * QuadTree<DATA>::node_Deep_Copy(Tree_Node * oldNode)
+typename QuadTree<DATA>::Tree_Node * QuadTree<DATA>::node_deep_copy(Tree_Node * oldNode)
 {
   if (oldNode ==NULL)
     {
       return NULL;
     }
 
-  Tree_Node * subroot=coppyNode(oldNode);
+  Tree_Node * subroot=coppy_node(oldNode);
 
-  ((*subroot).North)=node_Deep_Copy((*subroot).North);
-  ((*subroot).South)=node_Deep_Copy((*subroot).South);
-  ((*subroot).East)=node_Deep_Copy((*subroot).East);
-  ((*subroot).West) =node_Deep_Copy((*subroot).West);
+  ((*subroot).North)=node_deep_copy((*subroot).North);
+  ((*subroot).South)=node_deep_copy((*subroot).South);
+  ((*subroot).East)=node_deep_copy((*subroot).East);
+  ((*subroot).West) =node_deep_copy((*subroot).West);
 
 }
 template <class DATA>
-typename QuadTree<DATA>::Tree_Node * QuadTree<DATA>::coppyNode(Tree_Node * oldNode)
+typename QuadTree<DATA>::Tree_Node * QuadTree<DATA>::coppy_node(Tree_Node * oldNode)
 {
   if (oldNode==NULL)
     {
       return NULL;
     }
-  Tree_Node * newNode=new Tree_Node(oldNode);
+  Tree_Node * new_node=new Tree_Node(oldNode);
 
-  return newNode;
+  return new_node;
 }
 template <class DATA>
 QuadTree<DATA>:: ~QuadTree()
@@ -72,11 +72,11 @@ void QuadTree<DATA>::delete_branch(Tree_Node * deadNode)
 template <class DATA>
 QuadTree<DATA>::Tree_Node::Tree_Node(Tree_Node * oldNode)
 {
-  newNode-> North=(*oldNode).North;
-  newNode-> South=(*oldNode).South; 
-  newNode-> East=(*oldNode).East; 
-  newNode-> West=(*oldNode).West;
-  newNode-> data=new DATA((*oldNode).data);
+  new_node-> North=(*oldNode).North;
+  new_node-> South=(*oldNode).South; 
+  new_node-> East=(*oldNode).East; 
+  new_node-> West=(*oldNode).West;
+  new_node-> data=new DATA((*oldNode).data);
 }
 
 template <class DATA>
@@ -116,13 +116,13 @@ void QuadTree<DATA>::add_data_helper(Tree_Node * subroot,DATA * data)
 }
 
 template <class DATA>
-bool QuadTree<DATA>:: is_in_Tree( DATA * compare_data)
+bool QuadTree<DATA>:: is_in_tree( DATA * compare_data)
 {
-  return is_in_Tree_helper(head,compare_data);
+  return is_in_tree_helper(head,compare_data);
 }
 
 template <class DATA>
-bool QuadTree<DATA>::is_in_Tree_helper(Tree_Node * sub_root, DATA * compare_data)
+bool QuadTree<DATA>::is_in_tree_helper(Tree_Node * sub_root, DATA * compare_data)
 {
   if (sub_root == NULL)
     {
@@ -132,19 +132,19 @@ bool QuadTree<DATA>::is_in_Tree_helper(Tree_Node * sub_root, DATA * compare_data
     {
       return 1;
     }
-  if (is_in_Tree_helper(sub_root-> North,compare_data))
+  if (is_in_tree_helper(sub_root-> North,compare_data))
     {
       return 1;
     }
-  if (is_in_Tree_helper(sub_root-> South,compare_data))
+  if (is_in_tree_helper(sub_root-> South,compare_data))
     {
       return 1;
     }
-  if (is_in_Tree_helper(sub_root-> East,compare_data))
+  if (is_in_tree_helper(sub_root-> East,compare_data))
     {
       return 1;
     }
-  if (is_in_Tree_helper(sub_root-> West,compare_data))
+  if (is_in_tree_helper(sub_root-> West,compare_data))
     {
       return 1;
     }

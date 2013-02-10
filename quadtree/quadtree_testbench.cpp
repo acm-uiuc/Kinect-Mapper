@@ -14,8 +14,8 @@ int main()
   
   testTree.add_data(x);
   testTree.add_data(y);
-  assert(testTree.is_in_Tree(y));
-  assert(!testTree.is_in_Tree(z));
+  assert(testTree.is_in_tree(y));
+  assert(!testTree.is_in_tree(z));
 
 	return 0;
 }
