@@ -9,23 +9,29 @@
 #ifndef NAVIGATION_H
 #define NAVIGATION_H
 
+/** \brief
+ * Stores odometry information about the robot
+ */
 struct OdomTrans 
 {
-  // Translation
+  /** \brief
+   * Stores translations where +z is forward, +x is right, and +y is down
+   */
   double x,y,z;
-  // Euler Angles
+
+  /** \brief
+   * Stores the Euler Angles that encodes the robot's pose
+   */
   double alpha,beta,gamma;
 };
 
+/** \brief
+ * Stores the data about the current state of the robot
+ */
 struct FrameData
 {
   OdomTrans trans; 
   
 };
-
-#include "graph/graph.h"
-#include "odometry/odometry.h"
-#include "planning/planning.h"
-#include "utilities/kinect_interface.h"
 
 #endif

@@ -1,28 +1,7 @@
-cmake_minimum_required(VERSION 2.6.0)
+set(LIB_NAME ${KIN_LIB_NAME}) 
+set(LINK_LIBS ${KIN_LIBS})
 
+set(LIB_SRC navigation.cpp)
 
-
-# build libfovis
-#add_subdirectory(${PROJECT_SOURCE_DIR}/odometry/libfovis)
-#set (FovisLib ${FovisLib} fovis)
-
-#find_package(fovis REQUIRED )
-find_package(EIGEN REQUIRED eigen3)
-
-include_directories(${PROJECT_SOURCE_DIR} ${EIGEN_INCLUDE_DIRS} ${PROJECT_SOURCE_DIR}/utilitites)
-
-# build the main library
-add_library(VisualNav SHARED
-    graph/graph.cpp
-    planning/planning.cpp
-    odometry/odometry.cpp
-    utilities/kinect_interface.cpp
-    )
-
-#add_dependencies(VisualNav fovis)
-
-add_executable(KinectMapperNav
-  navigation.cpp
-)
-
-target_link_libraries(KinectMapperNav VisualNav)
+add_library(kinect_mapper_${LIB_NAME} ${LIB_SRC})
+target_link_libraries(kinect_mapper_${LIB_NAME} ${LINK_LIBS})
