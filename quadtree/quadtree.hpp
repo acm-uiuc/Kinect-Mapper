@@ -1,6 +1,6 @@
  
-#ifndef _QuadTree_C_
-#define _QuadTree_C_
+#ifndef _QuadTree_HPP_
+#define _QuadTree_HPP_
 
 
 #include "quadtree.h"
@@ -103,6 +103,67 @@ void QuadTree<DATA>::add_data(DATA * data)
 }
 
 template <class DATA>
+bool QuadTree<DATA>::add_data_next_to(DATA * data,DATA * next_to,QuadTree::Direction witch_way)
+{
+  if (head==NULL)
+    {
+      return false;
+    }
+  else
+    {
+      Tree_Node * target_node=find_in_tree_helper(head,next_to);
+      if (target_node==NULL)
+	{
+	  return false;
+	}
+	Tree_Node * temp=NULL;
+      switch (witch_way){
+      case North :
+
+	if (target_node->North != NULL)
+	  {
+	    temp= target_node->North;
+	  }
+	target_node->North=new Tree_Node(data);
+	target_node->North->North=temp;
+	break;
+      case South :
+         temp=NULL;
+	if (target_node->South != NULL)
+	  {
+	   temp= target_node->South;
+	  }
+	target_node->South=new Tree_Node(data);
+	target_node->South->South=temp;
+	break;
+
+      case East :
+
+	if (target_node->East != NULL)
+	  {
+	    temp= target_node->East;
+	  }
+	target_node->East=new Tree_Node(data);
+	target_node->East->East=temp;
+	break;
+
+      case West :
+
+	if (target_node->West != NULL)
+	  {
+	    temp= target_node->West;
+	  }
+	target_node->West=new Tree_Node(data);
+	target_node->West->West=temp;
+	break;
+      }
+      
+    }
+  return true;
+}
+
+
+template <class DATA>
 void QuadTree<DATA>::add_data_helper(Tree_Node * subroot,DATA * data)
 {
   if (subroot->North==NULL)
@@ -111,9 +172,12 @@ void QuadTree<DATA>::add_data_helper(Tree_Node * subroot,DATA * data)
     }
   else
     {
+      
       add_data_helper(subroot->North,data);
     }
 }
+
+
 
 template <class DATA>
 bool QuadTree<DATA>:: is_in_tree( DATA * compare_data)
@@ -150,4 +214,42 @@ bool QuadTree<DATA>::is_in_tree_helper(Tree_Node * sub_root, DATA * compare_data
     }
   return 0;
 }
+
+template <class DATA>
+typename QuadTree<DATA>::Tree_Node * QuadTree<DATA>::find_in_tree_helper(Tree_Node * sub_root, DATA * compare_data)
+{
+  if (sub_root == NULL)
+    {
+      return NULL;
+    }
+  if ((*compare_data)==(*(sub_root->data)))
+    {
+      return sub_root;
+    }
+  Tree_Node * check_dir;
+  
+  check_dir = find_in_tree_helper(sub_root-> North,compare_data);
+  if (check_dir)
+    {
+      return check_dir;
+    }
+  check_dir = find_in_tree_helper(sub_root-> South,compare_data);
+  if (check_dir)
+    {
+      return check_dir;
+    }
+  check_dir = find_in_tree_helper(sub_root-> East,compare_data);
+    if (check_dir)
+    {
+      return check_dir;
+    }
+  check_dir =find_in_tree_helper(sub_root-> West,compare_data);
+      if (check_dir)
+    {
+      return check_dir;
+    }
+ 
+  return NULL;
+}
+
 #endif

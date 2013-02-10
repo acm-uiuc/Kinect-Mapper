@@ -13,7 +13,7 @@ int main()
   int * z = new int (2);
   
   testTree.add_data(x);
-  testTree.add_data(y);
+  assert(testTree.add_data_next_to(y,x,QuadTree<int>::South));
   assert(testTree.is_in_tree(y));
   assert(!testTree.is_in_tree(z));
 
