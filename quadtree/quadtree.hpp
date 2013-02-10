@@ -9,7 +9,9 @@
 template <class DATA>
 QuadTree<DATA>:: QuadTree()
 {
-  head=NULL;
+  head=new Tree_Node(new DATA()); 
+  //the first node hold only empty data
+  //it cant be removed 
   depth=0;
   size=0;
 }
@@ -31,7 +33,7 @@ typename QuadTree<DATA>::Tree_Node * QuadTree<DATA>::node_deep_copy(Tree_Node * 
       return NULL;
     }
 
-  Tree_Node * subroot=coppy_node(oldNode);
+  Tree_Node * subroot=copy_node(oldNode);
 
   ((*subroot).North)=node_deep_copy((*subroot).North);
   ((*subroot).South)=node_deep_copy((*subroot).South);
@@ -40,7 +42,7 @@ typename QuadTree<DATA>::Tree_Node * QuadTree<DATA>::node_deep_copy(Tree_Node * 
 
 }
 template <class DATA>
-typename QuadTree<DATA>::Tree_Node * QuadTree<DATA>::coppy_node(Tree_Node * oldNode)
+typename QuadTree<DATA>::Tree_Node * QuadTree<DATA>::copy_node(Tree_Node * oldNode)
 {
   if (oldNode==NULL)
     {
@@ -55,9 +57,11 @@ QuadTree<DATA>:: ~QuadTree()
 {
   delete_branch(head);
 }
+
 template <class DATA>
 void QuadTree<DATA>::delete_branch(Tree_Node * deadNode)
 {
+  
   if (deadNode!=NULL)
     {
       delete_branch(deadNode->North);
@@ -66,6 +70,29 @@ void QuadTree<DATA>::delete_branch(Tree_Node * deadNode)
       delete_branch(deadNode->West);
       delete(deadNode->data);
       delete(deadNode);
+    }
+}
+
+template <class DATA>
+bool QuadTree<DATA>::delete_branch(DATA * data)
+{
+
+   Tree_Node * target_node=find_in_tree_helper(head,data);
+ if (target_node==NULL)
+    {
+      return false;
+    }
+ if (head!=NULL)
+    {
+      delete_branch(target_node->North);
+      delete_branch(target_node->South);
+      delete_branch(target_node->East);
+      delete_branch(target_node->West);
+      target_node.North=NULL;
+      target_node.South=NULL;
+      target_node.East=NULL;
+      target_node.West=NULL;
+
     }
 }
 
@@ -170,6 +197,18 @@ void QuadTree<DATA>::add_data_helper(Tree_Node * subroot,DATA * data)
     {
       subroot->North = new Tree_Node(data);  
     }
+  else if (subroot->South==NULL)
+    {
+      subroot->South = new Tree_Node(data);  
+    }
+  else if (subroot->East==NULL)
+    {
+      subroot->East = new Tree_Node(data);  
+    }
+  else if (subroot->North==NULL)
+    {
+      subroot->West = new Tree_Node(data);  
+    }
   else
     {
       
@@ -222,6 +261,7 @@ typename QuadTree<DATA>::Tree_Node * QuadTree<DATA>::find_in_tree_helper(Tree_No
     {
       return NULL;
     }
+
   if ((*compare_data)==(*(sub_root->data)))
     {
       return sub_root;
