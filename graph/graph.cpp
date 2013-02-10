@@ -7,6 +7,7 @@
  ***********************************************************************/
 
 #include "graph.h"
+#include "string.h"
 
 VisGraph::VisGraph()
 {

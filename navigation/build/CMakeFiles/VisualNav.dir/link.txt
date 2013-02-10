@@ -1,0 +1,1 @@
+/usr/bin/c++  -fPIC    -shared -Wl,-soname,libVisualNav.so -o libVisualNav.so CMakeFiles/VisualNav.dir/graph/graph.cpp.o CMakeFiles/VisualNav.dir/planning/planning.cpp.o CMakeFiles/VisualNav.dir/odometry/odometry.cpp.o CMakeFiles/VisualNav.dir/utilities/kinect_interface.cpp.o 

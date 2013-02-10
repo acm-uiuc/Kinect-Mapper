@@ -12,7 +12,7 @@ set(KINECT_MAPPER_COMPONENTS utilities
                              graph
 			     odometry
 			     planning
-			     quadtree
+			     #quadtree
 			     )
 
 foreach(DIR ${KINECT_MAPPER_COMPONENTS})
@@ -22,7 +22,9 @@ endforeach()
 
 include_directories(${KINECT_MAPPER_SRC_DIRS}
                     ${EIGEN_INCLUDE_DIRS}
-		    ${FOVIS_DIR}/libfovis)
+		    ${FOVIS_DIR}/libfovis
+		    ${PROJECT_SOURCE_DIR}/quadtree
+		    )
 set(KIN_LIBS fovis)
 set(DOC_SOURCE_DIR "${PROJECT_SOURCE_DIR}")
 foreach(KIN_LIB_NAME ${KINECT_MAPPER_COMPONENTS})
