@@ -125,8 +125,8 @@ int main(int argc, char *argv[]){
 	}
 
 	// open port for communication with arduino
-	if((ser = open("/dev/ttyUSB0", O_RDWR | O_FSYNC | O_TRUNC)) == -1){
-		printf("Unable to open port /dev/ttyUSB0,\n");
+	if((ser = open("/dev/ttyACM0", O_RDWR | O_FSYNC | O_TRUNC)) == -1){
+		printf("Unable to open port /dev/ttyACM0,\n");
 //		exit(1);	TODO: uncomment once connected to arduino
 	}else{
 		// set baud rate
