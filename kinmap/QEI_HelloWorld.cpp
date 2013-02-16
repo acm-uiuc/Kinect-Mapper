@@ -1,4 +1,4 @@
-#include "QEI.h"
+#include <QEI.h>
 
 Serial pc(USBTX, USBRX);
 //Use X4 encoding.
