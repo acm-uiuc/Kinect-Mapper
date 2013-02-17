@@ -9,6 +9,8 @@
 #ifndef STATEINFORMATION_H
 #define STATEINFORMATION_H
 
+#include <boost/shared_ptr.hpp>
+
 /** \brief
  * Stores odometry information about the robot
  */
@@ -33,5 +35,8 @@ struct FrameData
   OdomTrans trans; 
   
 };
+
+typedef boost::shared_ptr<FrameData> FrameDataPtr;
+typedef boost::shared_ptr<OdomTrans> OdomTransPtr;
 
 #endif

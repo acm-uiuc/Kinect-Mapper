@@ -19,14 +19,13 @@ RGBDVisOdometry::RGBDVisOdometry(const KinectInter& camera)
 
 RGBDVisOdometry::~RGBDVisOdometry()
 {
-  delete Odom_;
 }
 
 /*************************************************************
  *
  *
  ***********************************************************/
-OdomTrans& RGBDVisOdometry::getMotionEstimate(FrameData* currFrame /* = NULL */)
+OdomTrans& RGBDVisOdometry::getMotionEstimate(FrameDataPtr currFrame)
 {/*
   // Process frame if a new frame is added
   if (currFrame != NULL)
@@ -45,7 +44,7 @@ OdomTrans& RGBDVisOdometry::getMotionEstimate(FrameData* currFrame /* = NULL */)
  *
  *
  ***********************************************************/
-OdomTrans& RGBDVisOdometry::getPose(FrameData* currFrame /* = NULL */)
+OdomTrans& RGBDVisOdometry::getPose(FrameDataPtr currFrame)
 {/*
   // Process frame if a new frame is added
   if (currFrame != NULL)

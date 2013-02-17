@@ -19,11 +19,10 @@ int main(int argc, char** argv)
   KinectInter camera;
   RGBDVisOdometry odom(camera);
   MapperPathPlanner planner;
-  FrameData* prevFrame = NULL;
 
   while (currStep < totalSteps) {
     // Get RGBD data from current frame
-    FrameData* currFrame = camera.getFrame();
+    FrameDataPtr currFrame = camera.getFrame();
     // Get Transformation from previous frame
     odom.getMotionEstimate(currFrame);
     // Add new node to the graph
@@ -36,7 +35,6 @@ int main(int argc, char** argv)
     int waitlength = 5;
     sleep(waitlength);
     // Prepare for next iteration
-    prevFrame = currFrame;
     currStep++;
   }
 
