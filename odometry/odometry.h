@@ -37,14 +37,14 @@ class RGBDVisOdometry
    * \param[in] currFrame the frame of the position of the robot to base the estimate from
    * \return the transformation from the previous frame to the current one
    */
-  OdomTrans& getMotionEstimate(FrameData* currFrame = NULL);
+  OdomTrans& getMotionEstimate(FrameDataPtr currFrame);
 
   /** \brief
    * Gets the current pose estimate of the robot
    * \param[in] currFrame the frame of the position of the robot to base the estimate from
    * \return the transformation containing the pose data
    */
-  OdomTrans& getPose(FrameData* currFrame = NULL);
+  OdomTrans& getPose(FrameDataPtr currFrame);
 
   /** \brief
    * Converts Eigen Isometry3d type to the OdomTrans type
@@ -53,7 +53,7 @@ class RGBDVisOdometry
    */
   OdomTrans& Isometry3DToOdomTrans(Eigen::Isometry3d odomInfo);
  protected:
-  fovis::VisualOdometry*  Odom_;
+  boost::shared_ptr<fovis::VisualOdometry>  Odom_;
 };
 
 #endif

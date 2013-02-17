@@ -16,7 +16,7 @@ class VisGraph
  public:
   VisGraph();
   ~VisGraph();
-  bool addNode(FrameData* fdata);
+  bool addNode(FrameDataPtr fdata);
   void* getNode();
   bool removeNode();
  protected:

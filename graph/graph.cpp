@@ -19,7 +19,7 @@ VisGraph::~VisGraph()
   
 }
 
-bool VisGraph::addNode(FrameData* fdata)
+bool VisGraph::addNode(FrameDataPtr fdata)
 {
   //TODO: Add a node to the data structure
   return false;

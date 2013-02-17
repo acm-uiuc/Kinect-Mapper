@@ -3,6 +3,23 @@ cmake_minimum_required(VERSION 2.6.0)
 project(KINECT_MAPPER)
 
 find_package(EIGEN REQUIRED eigen3)
+find_package(Boost REQUIRED)
+
+find_path(OPENNI_INCLUDE_DIRS
+    NAMES XnOS.h
+    PATH_SUFFIXES ni)
+if("${OPENNI_INCLUDE_DIRS}" STREQUAL "OPENNI_INCLUDE_DIRS-NOTFOUND")
+    set(OPENNI_EXAMPLE_MESSAGE "Disabled - XnOS.h not found")
+else()
+    find_library(OPENNI_LIBS OpenNI)
+    if("${OPENNI_LIBS}" STREQUAL "OPENNI_LIBS-NOTFOUND")
+        set(OPENNI_EXAMPLE_MESSAGE "Disabled - OpenNI library not found")
+    else()
+        set(OPENNI_EXAMPLE_MESSAGE "Enabled")
+    endif()
+endif()
+
+include_directories(${OPENNI_INCLUDE_DIRS})
 
 set(FOVIS_DIR ${PROJECT_SOURCE_DIR}/libfovis)
 add_subdirectory(${FOVIS_DIR})
@@ -24,7 +41,7 @@ include_directories(${KINECT_MAPPER_SRC_DIRS}
 		    ${FOVIS_DIR}/libfovis
 		    ${PROJECT_SOURCE_DIR}/quadtree
 		    )
-set(KIN_LIBS fovis)
+set(KIN_LIBS fovis ${OPENNI_LIBS})
 set(DOC_SOURCE_DIR "${PROJECT_SOURCE_DIR}")
 foreach(KIN_LIB_NAME ${KINECT_MAPPER_COMPONENTS})
   add_subdirectory(${PROJECT_SOURCE_DIR}/${KIN_LIB_NAME})
