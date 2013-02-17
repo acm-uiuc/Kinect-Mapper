@@ -7,20 +7,29 @@
 
 #define SERVO_LEFT_PIN 9
 #define SERVO_RIGHT_PIN 11
-#define LEFT_WHEEL 0
-#define RIGHT_WHEEL 1
+
+#define LEFT_ENCODER_A 2
+#define LEFT_ENCODER_B 3
+#define RIGHT_ENCODER_A 4
+#define RIGHT_ENCODER_B 5
 
 #define SERVO_FORWARD 180
-#define SERVO_STOP 90
+#define DEFAULT_SERVO_STOP 90
 #define SERVO_BACKWARDS 0
 
 // magic number 0.037 converts clicks to inches
 #define LENGTH 18.25
 #define SCALING_FACTOR 0.002027397
+#define SAMPLE_TIME 50 // sample time for geting velocity
 
 Servo servo_left;
 Servo servo_right;
 
+// Calibraiton Stuff
+volatile int myLeftServoStop;
+volatile int myRightServoStop;
+
+// Calculation Stuff
 volatile long int ldc = 0; // number of left wheel turns
 volatile long int rdc = 0; // number of right wheel turns
 long previousVelocityTime = 0; // time at which velocity was last calculated
@@ -42,24 +51,139 @@ float params[3] = {0.0, 0.0, 0.0}; // {velL, velR, turn}
 int signL = 1, signR = 1;
 int vl, vr, turn;
 
+// Rotary Encoder Stuff
+int _pinA = LEFT_ENCODER_A;
+int _pinB = LEFT_ENCODER_B;
+int _pinC = RIGHT_ENCODER_A;
+int _pinD = RIGHT_ENCODER_B;
+volatile boolean _Aset;
+volatile boolean _Bset;
+volatile boolean _Cset;
+volatile boolean _Dset;
+volatile long int _Apulses;
+volatile long int _Cpulses;
+
 void setup()
-{
-//  QEI leftWheel (p29, p30, NC, 624);
-//  QEI rightWheel (p31, p32, NC, 624);
-  
-	Serial.begin(9600);
+{ 
+    Serial.begin(9600);
+	
+	rotaryEncoderSetup();
+	servoSetup();
 
-    servo_left.attach(SERVO_LEFT_PIN);
-    servo_left.write(SERVO_STOP);
-    servo_right.attach(SERVO_RIGHT_PIN);
-    servo_right.write(SERVO_STOP);
-
-    attachInterrupt(RIGHT_WHEEL, rdist_count, RISING);
-	attachInterrupt(LEFT_WHEEL,  ldist_count, RISING);
 }
 
-void ldist_count() { ldc++; }
-void rdist_count() { rdc++; }
+
+/** ---------- Begin Rotary Encoder Stuff ----------*/
+// @author Alex Burck
+
+void rotaryEncoderSetup()
+{
+  pinMode(_pinA, INPUT_PULLUP); // enable pullup resistor
+  pinMode(_pinB, INPUT_PULLUP);
+  pinMode(_pinC, INPUT_PULLUP);
+  pinMode(_pinD, INPUT_PULLUP);
+  
+  _Apulses = 0;
+  _Bpulses = 0;
+  
+  _Aset = (digitalRead(_pinA) == HIGH);
+  _Bset = (digitalRead(_pinB) == HIGH);
+  _Cset = (digitalRead(_pinC) == HIGH);
+  _Dset = (digitalRead(_pinD) == HIGH);
+  
+  attachInterrupt(_pinA, _interruptHandlerA, CHANGE);
+  attachInterrupt(_pinB, _interruptHandlerB, CHANGE);
+  attachInterrupt(_pinC, _interruptHandlerC, CHANGE);
+  attachInterrupt(_pinD, _interruptHandlerD, CHANGE);
+}
+
+int leftEncoderSpeed () { // returns a speed in pulses/second, takes 50 milliseconds to complete
+	int startTime = millis();
+	int currentTime;
+	long int startLeftCount = _Apulses;
+	
+	while ( (currentTime = millis()) < (startTime + SAMPLE_TIME) ) { } // waits until at least SAMPLE_TIME has gone by
+	
+	int timeDifference = currentTime - startTime;
+	long int currentLeftCount = _Apulses;
+	
+    int speedLeft = ((float) (currentLeftCount - startLeftCount)) / timeDifference;
+    return speedLeft;
+}
+
+int rightEncoderSpeed () { // returns a speed in pulses/second, takes 50 milliseconds to complete
+	int startTime = millis();
+	int currentTime;
+	long int startRightCount = _Cpulses;
+	
+	while ( (currentTime = millis()) < (startTime + SAMPLE_TIME) ) { } // waits until at least SAMPLE_TIME has gone by
+	
+	int timeDifference = currentTime - startTime;
+	long int currentRightCount = _Cpulses;
+	
+	int speedRight = ((float) (currentRightCount - startRighttCount)) / timeDifference;
+    return speedRight;
+}
+
+void _interruptHandlerA()
+{
+  _Aset = digitalRead(_pinA) == HIGH;
+  _Apulses = (_Aset != _Bset) ? _Apulses + 1 : _Apulses - 1;
+    // Adjust count + if A leads B
+}
+
+void _interruptHandlerB()
+{
+  _Bset = digitalRead(_pinB) == HIGH;
+  _Apulses = (_Aset == _Bset) ? _Apulses + 1 : _Apulses - 1;
+    // Adjust count + if A follows B
+}
+
+void _interruptHandlerC()
+{
+  _Cset = digitalRead(_pinC) == HIGH;
+  _Cpulses = (_Cset != _Dset) ? _Cpulses + 1 : _Cpulses - 1;
+    // Adjust count + if C leads D
+}
+
+void _interruptHandlerD()
+{
+  _Dset = digitalRead(_pinD) == HIGH;
+  _Dpulses = (_Cset == _Dset) ? _Cpulses + 1 : _Cpulses - 1;
+    // Adjust count + if C follows D
+}
+
+/** ---------- End Rotary Encoder Stuff ----------*/
+
+/** ---------- Begin Servo Stuff ----------*/
+// @author Alex Burck
+
+void servoSetup () {
+    servo_left.attach(SERVO_LEFT_PIN);
+    servo_right.attach(SERVO_RIGHT_PIN);
+    
+    servoCalibrate();
+}
+
+void servoCalibrate() {
+	servoCalibrateLeft();
+	servoCalibrateRight();
+	
+	servo_left.write(myLeftServoStop);
+    servo_right.write(myRightServoStop);
+}
+
+void servoCalibrateLeft() {
+	servo_left.write(DEFAULT_SERVO_STOP);
+	if (
+}
+
+void servoCalibrateRight() {
+
+}
+
+/** ---------- End Servo Stuff ----------*/
+
 
 void decodeCommand()
 {
