@@ -9,7 +9,7 @@
 #ifndef ODOMETRY_H
 #define ODOMETRY_H
 
-#include "navigation.h"
+#include "StateInformation.h"
 #include "kinect_interface.h"
 #include "fovis.hpp"
 

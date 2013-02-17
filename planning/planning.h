@@ -9,7 +9,7 @@
 #ifndef PLANNING_H
 #define PLANNING_H
 
-#include "navigation.h"
+#include "StateInformation.h"
 
 class MapperPathPlanner
 {

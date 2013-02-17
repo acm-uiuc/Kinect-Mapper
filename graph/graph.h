@@ -9,7 +9,7 @@
 #ifndef GRAPH_H
 #define GRAPH_H
 
-#include "navigation.h"
+#include "StateInformation.h"
 
 class VisGraph
 {

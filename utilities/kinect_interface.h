@@ -9,7 +9,7 @@
 #ifndef KINECT_INTERFACE_H
 #define KINECT_INTERFACE_H
 
-#include "navigation.h"
+#include "StateInformation.h"
 
 class KinectInter
 {

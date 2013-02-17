@@ -1,4 +1,4 @@
-#include "navigation.h"
+#include "StateInformation.h"
 #include "kinect_interface.h"
 #include "odometry.h"
 #include "graph.h"
