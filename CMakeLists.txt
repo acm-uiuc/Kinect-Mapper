@@ -8,7 +8,6 @@ set(FOVIS_DIR ${PROJECT_SOURCE_DIR}/libfovis)
 add_subdirectory(${FOVIS_DIR})
 
 set(KINECT_MAPPER_COMPONENTS utilities
-                             navigation
                              graph
 			     odometry
 			     planning
