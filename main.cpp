@@ -3,6 +3,7 @@
 #include "odometry.h"
 #include "graph.h"
 #include "planning.h"
+#include <unistd.h>
 
 int main(int argc, char** argv)
 {
