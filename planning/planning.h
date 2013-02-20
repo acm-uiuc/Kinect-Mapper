@@ -6,22 +6,18 @@
  ************************************************************************
  ***********************************************************************/
 
-#ifndef GRAPH_H
-#define GRAPH_H
+#ifndef PLANNING_H
+#define PLANNING_H
 
-#include "navigation.h"
+#include "StateInformation.h"
 
-class VisGraph
+class MapperPathPlanner
 {
  public:
-  VisGraph();
-  ~VisGraph();
-  bool addNode(FrameData* fdata);
-  void* getNode();
-  bool removeNode();
+  MapperPathPlanner();
+  ~MapperPathPlanner();
+  void* getNextCommand();
  protected:
-  //need a data structure to implement the configuration space
-  //a quad tree would make sense
 };
 
 #endif

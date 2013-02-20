@@ -5,27 +5,22 @@
  changes you think are necessary.
  ************************************************************************
  ***********************************************************************/
+#include "planning.h"
+#include "string.h"
 
-#ifndef NAVIGATION_H
-#define NAVIGATION_H
-
-struct OdomTrans 
+MapperPathPlanner::MapperPathPlanner()
 {
-  // Translation
-  double x,y,z;
-  // Euler Angles
-  double alpha,beta,gamma;
-};
 
-struct FrameData
+}
+
+MapperPathPlanner::~MapperPathPlanner()
 {
-  OdomTrans trans; 
-  
-};
 
-#include "graph/graph.h"
-#include "odometry/odometry.h"
-#include "planning/planning.h"
-#include "utilities/kinect_interface.h"
+}
 
-#endif
+void* MapperPathPlanner::getNextCommand()
+{
+  //TODO: implement planning algorithim, will need to change return
+  // type
+  return NULL;
+}

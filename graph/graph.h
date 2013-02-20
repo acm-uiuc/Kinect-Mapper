@@ -6,23 +6,22 @@
  ************************************************************************
  ***********************************************************************/
 
-#ifndef ODOMETRY_H
-#define ODOMETRY_H
+#ifndef GRAPH_H
+#define GRAPH_H
 
-#include "navigation.h"
-#include "../utilities/kinect_interface.h"
-#include <fovis/fovis.hpp>
+#include "StateInformation.h"
 
-class RGBDVisOdometry
+class VisGraph
 {
  public:
-  RGBDVisOdometry(const KinectInter& camera);
-  ~RGBDVisOdometry();
-  OdomTrans& getMotionEstimate(FrameData* currFrame = NULL);
-  OdomTrans& getPose(FrameData* currFrame = NULL);
-  OdomTrans& Isometry3DToOdomTrans(Eigen::Isometry3d odomInfo);
+  VisGraph();
+  ~VisGraph();
+  bool addNode(FrameDataPtr fdata);
+  void* getNode();
+  bool removeNode();
  protected:
-  fovis::VisualOdometry*  Odom_;
+  //need a data structure to implement the configuration space
+  //a quad tree would make sense
 };
 
 #endif

@@ -6,18 +6,33 @@
  ************************************************************************
  ***********************************************************************/
 
-#ifndef PLANNING_H
-#define PLANNING_H
+#include "graph.h"
+#include "string.h"
 
-#include "navigation.h"
-
-class MapperPathPlanner
+VisGraph::VisGraph()
 {
- public:
-  MapperPathPlanner();
-  ~MapperPathPlanner();
-  void* getNextCommand();
- protected:
-};
+  //TODO: Initialize data structure and any other members
+}
 
-#endif
+VisGraph::~VisGraph()
+{
+  
+}
+
+bool VisGraph::addNode(FrameDataPtr fdata)
+{
+  //TODO: Add a node to the data structure
+  return false;
+}
+
+void* VisGraph::getNode()
+{
+  //TODO: Get a node, parameters TBD, should change return value
+  return NULL;
+}
+
+bool  VisGraph::removeNode()
+{
+  //TODO: Remove a node, parameters TBD
+  return false;
+}
