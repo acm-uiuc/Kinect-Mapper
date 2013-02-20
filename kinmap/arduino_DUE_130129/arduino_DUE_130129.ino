@@ -14,13 +14,13 @@
 #define RIGHT_ENCODER_B 6
 
 #define SERVO_FORWARD 180
-#define DEFAULT_SERVO_STOP 90
+#define DEFAULT_SERVO_STOP 95 // magic number
 #define SERVO_BACKWARDS 0
 
 
-#define SAMPLE_TIME 20 // sample time for geting speed
+#define SAMPLE_TIME 20 // sample time for geting speed in milliseconds
 #define CALIBRATION_ACCURACY 2 // calibration is +/- 5 pulses/millisecond
-#define CALIBRATION_DELAY 10 // delay between writing to servo
+#define CALIBRATION_DELAY 10 // delay between writing to servo in milliseconds
 
 Servo servo_left;
 Servo servo_right;
@@ -28,7 +28,6 @@ Servo servo_right;
 // Calibraiton Stuff
 volatile int myLeftServoStop;
 volatile int myRightServoStop;
-
 
 // Rotary Encoder Stuff
 int _pinA = LEFT_ENCODER_A;
@@ -41,6 +40,11 @@ volatile boolean _Cset;
 volatile boolean _Dset;
 volatile long _Apulses;
 volatile long _Cpulses;
+
+// Decoder Stuff
+float params[3] = {0.0, 0.0, 0.0}; // {velL, velR, turn}
+int signL = 1, signR = 1;
+int vl, vr, turn;
 
 
 /** ---------- Begin Rotary Encoder Stuff ----------*/
@@ -140,15 +144,18 @@ void servoSetup () {
 }
 
 void servoCalibrate() {
-	servoCalibrateLeft(DEFAULT_SERVO_STOP, leftEncoderSpeed());
-	servoCalibrateRight(DEFAULT_SERVO_STOP, rightEncoderSpeed());
+	servo_left.write(DEFAULT_SERVO_STOP);
+    servo_right.write(DEFAULT_SERVO_STOP);
+	delay(CALIBRATION_DELAY);
+	
+	servoCalibrateLeft(leftEncoderSpeed());
+	servoCalibrateRight(rightEncoderSpeed());
 	
 	servo_left.write(myLeftServoStop);
     servo_right.write(myRightServoStop);
 }
 
-void servoCalibrateLeft(int servoSpeed, int prevEncoderSpeed) {
-	servo_left.write(servoSpeed);
+void servoCalibrateLeft(int prevEncoderSpeed) {
 	int encoderSpeed = leftEncoderSpeed();
 	if (encoderSpeed <= CALIBRATION_ACCURACY) return;
 
@@ -161,11 +168,11 @@ void servoCalibrateLeft(int servoSpeed, int prevEncoderSpeed) {
 		servo_left.write(servoSpeed);
 	}
 
-	delay(CALIBRATION_DELAY); // 10 ms
+	delay(CALIBRATION_DELAY);
+	servoCalibrateLeft(encoderSpeed);
 }
 
-void servoCalibrateRight(int servoSpeed, int prevEncoderSpeed) {
-	servo_right.write(servoSpeed);
+void servoCalibrateRight(int prevEncoderSpeed) {
 	int encoderSpeed = rightEncoderSpeed();
 	if (encoderSpeed <= CALIBRATION_ACCURACY) return;
 
@@ -177,7 +184,8 @@ void servoCalibrateRight(int servoSpeed, int prevEncoderSpeed) {
 		servoSpeed = servoSpeed - 1;
 		servo_right.write(servoSpeed);
 	}
-	delay(CALIBRATION_DELAY); // 10 ms
+	delay(CALIBRATION_DELAY);
+	servoCalibrateLeft(encoderSpeed);
 }
 
 /** ---------- End Servo Stuff ----------*/
@@ -190,7 +198,100 @@ void setup()
 	servoSetup();
 }
 
+void decodeCommand()
+{
+    // reset the integral term (so that we don't stop for a moment)
+    //integralL = 0.0;
+    //integralR = 0.0;
+
+    vl   = Serial.read() - 128;
+    vr   = Serial.read() - 128;
+    turn = Serial.read() - 128; 
+
+    // max speed is 1.0
+    params[0] = vl * 0.007874016;
+    params[1] = vr * 0.007874016;
+    params[2] = turn * 0.002;
+
+    if (vl == 0) {
+        signL = 0;
+    } else if (vl < 0) {
+        signL = -1;
+        params[0] *= -1;
+    } else {
+        signL = 1;
+    }
+
+    if (vr == 0) {
+        signR = 0;
+    } else if (vr < 0) {
+        signR = -1;
+        params[1] *= -1;
+    } else {
+        signR = 1;
+    }
+}
+
 void loop()
 {
-	// Currently only doing setup
+	if (Serial.available() >= 3) decodeCommand();
+
+    velL = leftEncoderSpeed();
+    velR = rightEncoderSpeed();
+/*
+    errorSteering = KpTurn * (velR - velL + params[2]);
+
+    // Delta_angle = (velL - velR) * (time passed) / (distance between wheels)
+    heading += SCALING_FACTOR * ((ldc - ldcprev) - (rdc - rdcprev));
+
+    ldcprev = ldc;
+    rdcprev = rdc;
+
+
+    // left motor control
+    errorL = params[0] - velL + errorSteering;
+    integralL += (errorL + errorLprev) * .0005 * timeDifference;
+    errorLprev = errorL;
+    uL = (Kp * errorL) + (integralL * Ki);
+
+    // correct for unbounded integrals
+    if (uL > 90) {
+        uL = 90;
+        integralL *= .99;
+    } else if (uL < -90) {
+        uL = -90;
+        integralL *= .99; 
+    }
+
+    // right motor control
+    errorR = params[1] - velR - errorSteering;
+    integralR += (errorR + errorRprev) * .0005 * timeDifference;
+    errorRprev = errorR;
+    uR = (Kp * errorR) + (integralR * Ki);
+
+
+    // correct for unbounded integrals
+    if (uR > 90) {
+        uR = 90;
+        integralR *= .95;
+    } else if (uR < -90) {
+        uR = -90;
+        integralR *= .95; 
+    }
+
+
+    servo_right.write(90 + signR * (int) uR);
+    servo_left.write(90 - signL * (int) uL);
+*/
+/*
+    Serial.print(uL);Serial.print("\t");
+    Serial.print(ldcprev);Serial.print("\t");
+
+    Serial.print(uR);Serial.print("\t");
+    Serial.print(rdcprev);Serial.print("\t");
+*/
+
+    Serial.print(velL);Serial.print(" ");
+    Serial.print(velR);Serial.print(" ");
+    Serial.println(heading);
 }
