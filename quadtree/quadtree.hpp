@@ -19,7 +19,7 @@ QuadTree<DATA>:: QuadTree()
 template <class DATA>
 QuadTree<DATA>::QuadTree(QuadTree * oldTree)
 {
-  head=nodeDeepCopy(oldTree->head);
+  head=node_deep_copy(oldTree->head);
   depth=oldTree->depth;
   size=oldTree->size;
   
@@ -99,11 +99,11 @@ bool QuadTree<DATA>::delete_branch(DATA * data)
 template <class DATA>
 QuadTree<DATA>::Tree_Node::Tree_Node(Tree_Node * oldNode)
 {
-  new_node-> North=(*oldNode).North;
-  new_node-> South=(*oldNode).South; 
-  new_node-> East=(*oldNode).East; 
-  new_node-> West=(*oldNode).West;
-  new_node-> data=new DATA((*oldNode).data);
+  North=(*oldNode).North;
+  South=(*oldNode).South; 
+  East=(*oldNode).East; 
+  West=(*oldNode).West;
+  data=new DATA((*(*oldNode).data));
 }
 
 template <class DATA>

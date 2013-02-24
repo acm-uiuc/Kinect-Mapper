@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 2.6.0)
 project(KINECT_MAPPER)
 
 find_package(EIGEN REQUIRED eigen3)
-find_package(Boost REQUIRED)
+find_package(Boost COMPONENTS unit_test_framework REQUIRED)
 
 find_path(OPENNI_INCLUDE_DIRS
     NAMES XnOS.h
@@ -51,6 +51,8 @@ endforeach()
 
 add_executable(kinect_mapper main.cpp)
 target_link_libraries(kinect_mapper ${KIN_LIBS})
+set(KIN_LIB_NAME quadtree_test)
+add_subdirectory(${PROJECT_SOURCE_DIR}/test)
 
 find_package(Doxygen)
 if(DOXYGEN_FOUND)
