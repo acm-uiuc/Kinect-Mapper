@@ -24,3 +24,17 @@ void* MapperPathPlanner::getNextCommand()
   // type
   return NULL;
 }
+
+
+// dist to obst
+// can I move?
+
+// point to point
+//  open motion planning lib
+// subset -> go home?
+
+// random wanderer
+// intelligent manner of movement
+
+
+// kinect data (interface) -- in utilities
