@@ -69,30 +69,11 @@ int main(int argc, char *argv[]){
 	}
 
 	// open port for communication with arduino
-<<<<<<< HEAD
 	if((ser = open("/dev/ttyACM1", O_RDWR | O_NOCTTY | O_NDELAY)) < 0){
 		printf("Unable to open port /dev/ttyACM1\n");
 		return -1;
-=======
-
-	if((ser = open("/dev/ttyACM0", O_RDWR | O_NOCTTY | O_NDELAY)) < 0){
-		printf("Unable to open port /dev/ttyACM0\n");
-		return -1;
-
-	if((ser = open("/dev/ttyACM0", O_RDWR | O_FSYNC | O_TRUNC)) == -1){
-		printf("Unable to open port /dev/ttyACM0,\n");
-//		exit(1);	TODO: uncomment once connected to arduino
-	}else{
-		// set baud rate
-		struct termios settings;
-		tcgetattr(ser, &settings);
-		cfsetospeed(&settings, baud);
-		tcsetattr(ser, TCSANOW, &settings);
-		tcflush(ser, TCOFLUSH);
-		
-		printf("Port is now open.\n");
->>>>>>> 7bd6f212d5f5d09f7085953b12eafde8294dd080
 	}
+
 	if( tcgetattr(ser, &settings) < 0){
 		printf("init of serial port: Couldn't get ser attributes\n");
 		return -1;
