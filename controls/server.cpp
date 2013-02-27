@@ -12,6 +12,7 @@
 #include <string>
 #include <signal.h>
 #include "aux_socket.h"
+#include <pthread.h>
 
 using namespace std;
 
@@ -24,7 +25,7 @@ int vr = 0;
 
 int accel = 4;
 
-string buf;
+char* buf;
 size_t BUFSIZE = 100;
 
 int ser;
@@ -45,7 +46,38 @@ void sigINT_handler(int s){
 
 	close(ser);
 
+	free(buf);
+
 	exit(1);
+}
+
+
+// handle information coming in from arduino
+static void* arduino_data_reader(void* args){
+
+	while(1){
+		// read line from serial
+		char b[1];
+		int i = 0;
+		do{
+			int n = read(ser, b, 1);
+			if( n == -1) break;
+			if( n == 0){
+				usleep(10000);	// wait 10 ms
+				continue;
+			}
+			buf[i] = b[0];
+			i++;
+		} while (b[0] != '\n');
+
+		buf[i] = 0;
+
+		read(ser, buf, BUFSIZE);
+		printf("%s", buf);
+		
+	}
+
+	return NULL;
 }
 
 
@@ -53,10 +85,10 @@ void sigINT_handler(int s){
 int main(int argc, char *argv[]){
 
 	string host = "127.0.0.1";
-	char port[] = "12342";
+	char port[] = "12344";
 	serverfd = -2;
 	int acceptfd = -2;
-	buf = new char(100);
+	buf = (char*)malloc(100);
 	struct termios settings;
 	
 	// set up interrupt handler
@@ -106,7 +138,8 @@ int main(int argc, char *argv[]){
 	}
 		
 	printf("Port is now open.\n");
-
+	
+/*	
 	// test write TODO: delete this
 	for(int i = 0; i < 1; i++){
 	char c1 = 128;
@@ -121,6 +154,21 @@ int main(int argc, char *argv[]){
 	if(n != 1)
 		printf("Could not write c3\n");
 	}
+	
+*/
+	// start reading data from arduino
+	pthread_attr_t attr;
+	if(pthread_attr_init(&attr) != 0){
+		printf("Error setting thread attributes.\n");
+	}
+	pthread_t thread_id;
+	if(pthread_create(&thread_id, &attr, &arduino_data_reader, NULL) != 0)
+		printf("Error arduino_data_reader thread.\n");
+
+	while(pthread_detach(thread_id) != 0)
+		printf("Error detaching thread\n");
+
+
 	// accept connections
 	while(1){
 		if((acceptfd = acceptSocket(serverfd)) == -1){
@@ -176,30 +224,12 @@ int main(int argc, char *argv[]){
 				vl += vl >= 0 ? accel : 0 - accel;
 				break;
 			case 'd':
-				vr -= vr >= 0 ? 0 - accel : accel;
-				vl -= vl >= 0 ? 0 - accel : accel;
+				vr -= vr >= 0 ? accel : 0-accel;
+				vl -= vl >= 0 ? accel : 0- accel;
 				break;
 			}
 		
-			// read line from serial
-			/*char b[1];
-			int i = 0;
-			do{
-				int n = read(ser, b, 1);
-				if( n == -1) return -1;
-				if( n == 0){
-					usleep(10000);	// wait 10 ms
-					continue;
-				}
-				buf[i] = b[0];
-				i++;
-			} while (b[0] != '\n');
-
-			buf[i] = 0;
-
-			read(ser, &buf, BUFSIZE);
-			printf("%s", &buf);
-			*/
+			
 			// write to serial
 			char d1 = (char) (vl + (int)CNUM);
 			char d2 = (char) (vr + (int)CNUM);
@@ -216,4 +246,4 @@ int main(int argc, char *argv[]){
 
 	}
 }
-}
+
