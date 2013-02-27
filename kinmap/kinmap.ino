@@ -30,7 +30,7 @@ float errorL = 0.0, errorR = 0.0; // error for controls
 float errorLprev = 0.0, errorRprev = 0.0; // error for controls
 float uL = 0.0, uR = 0.0; // control inputs for each wheel
 float integralL = 0.0, integralR = 0.0; // integral for controls of velocity
-float KpTurn = 3.0; // control gain from the coupling and turning
+float KpTurn = 1.0; // 3.0; // control gain from the coupling and turning
 float errorSteering = 0.0; // error input for the coupling
 float heading = 0.0; // robot heading
 

@@ -84,7 +84,7 @@ class Robbie:
         self.writeCommand(0, 0, 0)
 
 
-ser = serial.Serial('/dev/ttyUSB0', 9600)
+ser = serial.Serial('/dev/ttyACM0', 9600)
 rob = Robbie(ser)
 hasConnection = False
 
