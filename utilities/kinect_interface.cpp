@@ -43,6 +43,10 @@ KinectInter::~KinectInter()
 FrameDataPtr KinectInter::getFrame()
 {
   FrameDataPtr framePtr(new FrameData);
+
+  framePtr->depth_image = depth_image_;
+  framePtr->gray_image = gray_buf_;
+
   return framePtr;
 }
 
