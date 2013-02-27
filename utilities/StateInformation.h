@@ -10,6 +10,7 @@
 #define STATEINFORMATION_H
 
 #include <boost/shared_ptr.hpp>
+#include "fovis.hpp"
 
 /** \brief
  * Stores odometry information about the robot
@@ -33,7 +34,8 @@ struct OdomTrans
 struct FrameData
 {
   OdomTrans trans; 
-  
+  boost::shared_ptr<fovis::DepthImage> depth_image;
+  std::vector<uint8_t> gray_image;
 };
 
 typedef boost::shared_ptr<FrameData> FrameDataPtr;
