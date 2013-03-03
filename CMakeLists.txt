@@ -28,6 +28,7 @@ set(KINECT_MAPPER_COMPONENTS utilities
                              graph
 			     odometry
 			     planning
+			     controls
 			     #quadtree
 			     )
 
