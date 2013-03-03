@@ -13,17 +13,13 @@
 #include <signal.h>
 #include "aux_socket.h"
 #include <pthread.h>
+#include "robot.h"
 
 using namespace std;
 
 int serverfd;
 
-// TODO: put this in a class?
-float heading = 0.0;
-int vl = 0;
-int vr = 0;
-
-int accel = 4;
+Robot bob = new Robot();
 
 char* buf;
 size_t BUFSIZE = 100;
@@ -79,7 +75,6 @@ static void* arduino_data_reader(void* args){
 
 	return NULL;
 }
-
 
 // main server function
 int main(int argc, char *argv[]){
@@ -202,37 +197,33 @@ int main(int argc, char *argv[]){
 			printf("Received message: %c\n", message);
 	
 			// send input to robot
-			int vel = (vl >= 0 ? vl : 0-vl);
+			int vel = (bob.get_vel_left() >= 0 ? bob.get_vel_left() : 0-bob.get_vel_left());
 			int temp;
 			switch (message){
 			case 's':
-				vl = vr = 0;
+				bob.stop();
 				break;
 			case 'f':
-				vr = vl = vel > 0 ? vel : accel;
+				bob.go_forward(vel);
 				break;
 			case 'r':
-				vr = 0 - vel;
-				vl = vel;
+				bob.turn_right(vel);
 				break;
 			case 'l':
-				vr = vel;
-				vl = 0 - vel;
+				bob.turn_left(vel);
 				break;
 			case 'u':
-				vr += vr >= 0 ? accel : 0 - accel;
-				vl += vl >= 0 ? accel : 0 - accel;
+				bob.speed_up();
 				break;
 			case 'd':
-				vr -= vr >= 0 ? accel : 0-accel;
-				vl -= vl >= 0 ? accel : 0- accel;
+				bob.slow_down();
 				break;
 			}
 		
 			
 			// write to serial
-			char d1 = (char) (vl + (int)CNUM);
-			char d2 = (char) (vr + (int)CNUM);
+			char d1 = (char) (bob.get_vel_left() + (int)CNUM);
+			char d2 = (char) (bob.get_vel_right() + (int)CNUM);
 			int err;
 			
 			if(write(ser, &d1, 1) == 1)
