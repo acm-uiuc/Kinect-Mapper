@@ -28,7 +28,7 @@ int main(int argc, char** argv)
     // Add new node to the graph
     map.addNode(currFrame);
     // Get next movement command
-    char cmd = planner.getNextCommand(currFrame);
+    int cmd = planner.getNextCommand(currFrame);
     // Execute command
     // TODO: add call to arduino to execute command
     // Wait for command to finish

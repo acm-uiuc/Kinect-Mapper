@@ -25,6 +25,10 @@ class MapperPathPlanner
   int depthSumThreshold;
   int width_;
   int height_;
+
+  int NODATA = -1;
+  int STOP = 0;
+  int FORWARD = 1;
 };
 
 #endif

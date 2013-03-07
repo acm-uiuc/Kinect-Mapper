@@ -60,11 +60,11 @@ bool MapperPathPlanner::canMove(FrameDataPtr currFrame){
 char MapperPathPlanner::getNextCommand(FrameDataPtr currFrame)
 {
   if (currFrame == NULL)
-    return 'q';
+    return NODATA;
   if (!canMove(currFrame))
-  	return 's';
+  	return STOP;
 
   //TODO: more interesting planning
 
-  return 'f';
+  return FORWARD;
 }
