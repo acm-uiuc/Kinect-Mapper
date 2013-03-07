@@ -10,14 +10,21 @@
 #define PLANNING_H
 
 #include "StateInformation.h"
+#include "kinect_interface.h"
 
 class MapperPathPlanner
 {
  public:
   MapperPathPlanner();
   ~MapperPathPlanner();
-  void* getNextCommand();
+  char getNextCommand(FrameDataPtr);
+  bool canMove(FrameDataPtr);
  protected:
+  //enum Command{STOP, NOCHANGE, FORWARD, BACKWARD, RTURN, LTURN, SUP, SDOWN};
+  float minDepth;    
+  int depthSumThreshold;
+  int width_;
+  int height_;
 };
 
 #endif
