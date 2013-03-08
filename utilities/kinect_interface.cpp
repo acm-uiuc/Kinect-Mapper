@@ -9,23 +9,12 @@
 #include "kinect_interface.h"
 #include <cstdio>
 
-KinectInter::KinectInter()
+KinectInter::KinectInter(fovis::CameraIntrinsicsParameters& rgb_params)
 {
-  width_ = 640;
-  height_ = 480;
+  width_ = rgb_params.width;
+  height_ = rgb_params.height;
 
-  memset(&rgb_params_, 0, sizeof(fovis::CameraIntrinsicsParameters));
-  rgb_params_.width = width_;
-  rgb_params_.height = height_;
-
-  // TODO read these values from the camera somehow, instead of hard-coding it
-  // Unfortunately, the OpenNI API doesn't seem to expose them.
-  rgb_params_.fx = 528.49404721; 
-  rgb_params_.fy = rgb_params_.fx;
-  rgb_params_.cx = width_ / 2.0;
-  rgb_params_.cy = height_ / 2.0;
-
-  depth_image_ = new fovis::DepthImage(rgb_params_, width_, 
+  depth_image_ = new fovis::DepthImage(rgb_params, width_, 
 						     height_);
 
   depth_data_ = new float[width_ * height_];

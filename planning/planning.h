@@ -15,7 +15,7 @@
 class MapperPathPlanner
 {
  public:
-  MapperPathPlanner();
+  MapperPathPlanner(int width, int height);
   ~MapperPathPlanner();
   char getNextCommand(FrameDataPtr);
   bool canMove(FrameDataPtr);

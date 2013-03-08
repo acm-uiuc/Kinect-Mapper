@@ -20,7 +20,7 @@ using std::vector;
 class KinectInter
 {
  public:
-  KinectInter();
+  KinectInter(fovis::CameraIntrinsicsParameters& rgb_params);
   ~KinectInter();
   bool initialize();
   bool captureOne();
@@ -45,8 +45,6 @@ class KinectInter
   int height_;
   bool have_image_;
   bool have_depth_;
-
-  fovis::CameraIntrinsicsParameters rgb_params_;
 
   float* depth_data_;
   uint8_t* gray_buf_;

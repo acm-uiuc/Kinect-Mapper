@@ -16,10 +16,10 @@
 
 using namespace fovis;
 
-MapperPathPlanner::MapperPathPlanner()
+MapperPathPlanner::MapperPathPlanner(int width, int height)
 {
-        width_ = 640;
-	height_ = 480;
+        width_ = width;
+	height_ = height;
 	minDepth = 1.0;		// min depth to object in meters
 	depthSumThreshold = (width_*height_)/2;
 

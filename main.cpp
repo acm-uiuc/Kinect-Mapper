@@ -19,6 +19,7 @@ int main(int argc, char** argv)
   int currStep = 1;
   int height = 480, width = 640;
   fovis::CameraIntrinsicsParameters rgb_params;
+  memset(&rgb_params, 0, sizeof(fovis::CameraIntrinsicsParameters));
   rgb_params.width = width;
   rgb_params.height = height;
   rgb_params.fx = 528.49404721; 
@@ -28,7 +29,7 @@ int main(int argc, char** argv)
   fovis::Rectification rect(rgb_params);
   
   VisGraph map;
-  KinectInter camera;
+  KinectInter camera(rgb_params);
   if (!camera.initialize()) {
     cout << "Camera Initialization Failed." << endl;
     return 1;
@@ -39,7 +40,7 @@ int main(int argc, char** argv)
   }
   
   RGBDVisOdometry odom(rgb_params);
-  MapperPathPlanner planner;
+  MapperPathPlanner planner(width,height);
   //Interface interface;
   //interface.run();
 
@@ -57,11 +58,11 @@ int main(int argc, char** argv)
       // Add new node to the graph
       //map.addNode(currFrame);
       // Get next movement command
-      //int cmd = planner.getNextCommand(currFrame);
+      char cmd = planner.getNextCommand(currFrame);
       // Execute command
-      // interface.passCommand(cmd, MODE_PLANNER);
+      //interface.passCommand(cmd, MODE_PLANNER);
       // Wait for command to finish
-      }
+    }
     int waitlength = 2;
     sleep(waitlength);
     // Prepare for next iteration
