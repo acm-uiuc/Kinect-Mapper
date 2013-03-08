@@ -30,6 +30,7 @@ MapperPathPlanner::MapperPathPlanner()
 	LEFT=2;
 	RIGHT=-2;
 	current_direction=STOP;
+	BLOCKED=6;
 	srand(time(NULL));
 
 }
@@ -81,13 +82,20 @@ char MapperPathPlanner::getNextCommand(FrameDataPtr currFrame)
 {
   if (currFrame == NULL)
     return NODATA;
-  if(current_direction==STOP)
-    turn();
+  if(current_direction==BLOCKED)
+    {
+    current_direction= turn();
+    return current_direction;
+    }
   if (!canMove(currFrame))
-  	return STOP;
+    {
+      current_direction=BLOCKED;
+      return STOP;
+    }
+       
 
   //TODO: more interesting planning
-
+  current_direction=FORWARD;
   return FORWARD;
 }
 

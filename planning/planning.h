@@ -33,6 +33,7 @@ class MapperPathPlanner
   int LEFT;
   int RIGHT;
   int current_direction;
+  int BLOCKED;
 
 };
 
