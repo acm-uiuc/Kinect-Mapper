@@ -7,6 +7,7 @@
  ***********************************************************************/
 
 #include "kinect_interface.h"
+#include <cstdio>
 
 #define CHECK_STATUS(rc, msg) if((rc) != XN_STATUS_OK) { \
   fprintf(stderr, "%s: %s\n", (msg), xnGetStatusString(rc)); return false; }
@@ -27,69 +28,60 @@ KinectInter::KinectInter()
   rgb_params_.cx = width_ / 2.0;
   rgb_params_.cy = height_ / 2.0;
 
-  fovis::DepthImage* depthIm = new fovis::DepthImage(rgb_params_, width_, 
+  depth_image_ = new fovis::DepthImage(rgb_params_, width_, 
 						     height_);
-  depth_image_ = boost::shared_ptr<fovis::DepthImage>(depthIm);
 
   depth_data_ = new float[width_ * height_];
-  gray_buf_.resize(width_ * height_,0);
+  gray_buf_ = new uint8_t[width_ * height_];
+
+  freenect_angle_ = 0;
+  device_number_ = 0;
 }
 
 KinectInter::~KinectInter()
 {
   delete[] depth_data_;
+  delete [] gray_buf_;
 }
 
 FrameDataPtr KinectInter::getFrame()
 {
   FrameDataPtr framePtr(new FrameData);
-
   framePtr->depth_image = depth_image_;
-  framePtr->gray_image = gray_buf_;
-
+  memcpy(gray_buf_,framePtr->gray_image,width_ * height_ * sizeof(uint8_t));
   return framePtr;
 }
 
 
 bool KinectInter::initialize()
 {
-  XnStatus rc = context_.Init();
-  CHECK_STATUS(rc, "Initializing device context");
+  // initialize the kinect device
+  if (freenect_init(&f_ctx_, NULL) < 0) {
+    printf("freenect_init() failed\n");
+    return false;
+  }
 
-  printf("Initializing image stream\n");
-  image_gen_.Create(context_);
-  rc = image_gen_.Create(context_);
-  CHECK_STATUS(rc, "Initializing image stream");
+  freenect_set_log_level(f_ctx_, FREENECT_LOG_ERROR);
 
-  // set output format to RGB
-  image_gen_.SetPixelFormat(XN_PIXEL_FORMAT_RGB24);
+  int num_devices = freenect_num_devices(f_ctx_);
+  printf("Number of devices found: %d\n", num_devices);
 
-  XnMapOutputMode image_mode;
-  image_mode.nXRes = width_;
-  image_mode.nYRes = height_;
-  image_mode.nFPS = 30;
-  image_gen_.SetMapOutputMode(image_mode);
-  CHECK_STATUS(rc, "Setting image output mode");
+  if (num_devices < 1)
+    return false;
 
+  if (freenect_open_device(f_ctx_, &f_dev_, device_number_) < 0) {
+    printf("Could not open device\n");
+    return false;
+  }
 
-  printf("Initializing depth stream\n");
-  rc = depth_gen_.Create(context_);
-  CHECK_STATUS(rc, "Initializing depth stream");
+  freenect_set_user(f_dev_, this);
 
-  depth_gen_.SetMapOutputMode(image_mode);
-  CHECK_STATUS(rc, "Setting depth output mode");
+  freenect_frame_mode vmode = freenect_find_video_mode(FREENECT_RESOLUTION_MEDIUM, FREENECT_VIDEO_RGB);
+  freenect_frame_mode dmode = freenect_find_depth_mode(FREENECT_RESOLUTION_MEDIUM, FREENECT_DEPTH_REGISTERED);
 
-  depth_gen_.GetMetaData(depth_md_);
-  printf("Depth offset: %d %d\n", depth_md_.XOffset(), depth_md_.YOffset());
-  // XXX do we need to do something with the depth offset?
+  freenect_set_video_mode(f_dev_, vmode);
+  freenect_set_depth_mode(f_dev_, dmode);
 
-  // set the depth image viewpoint
-  depth_gen_.GetAlternativeViewPointCap().SetViewPoint(image_gen_);
-
-  // read off the depth camera field of view.  This is the FOV corresponding to
-  // the IR camera viewpoint, regardless of the alternative viewpoint settings.
-  XnFieldOfView fov;
-  rc = depth_gen_.GetFieldOfView(fov);
   return true;
 }
 
@@ -97,56 +89,78 @@ bool KinectInter::startDataCapture()
 {
   // start data capture
   printf("Starting data capture\n");
-  XnStatus rc = context_.StartGeneratingAll();
-  CHECK_STATUS(rc, "Starting data capture");
+  freenect_set_tilt_degs(f_dev_, freenect_angle_);
+  freenect_set_led(f_dev_, LED_OFF);
+  freenect_set_depth_callback(f_dev_, &KinectInter::depth_cb);
+  freenect_set_video_callback(f_dev_, &KinectInter::image_cb);
+
+  freenect_start_depth(f_dev_);
+  freenect_start_video(f_dev_);
   return true;
 }
 
 bool KinectInter::stopDataCapture()
 {
-  context_.StopGeneratingAll();
-  context_.Release();
+  freenect_stop_depth(f_dev_);
+  freenect_stop_video(f_dev_);
+
+  freenect_close_device(f_dev_);
+  freenect_shutdown(f_ctx_);
   return true;
 }
 
 bool KinectInter::captureOne()
 {
-  // Read a new frame
-  XnStatus rc = context_.WaitAndUpdateAll();
-  CHECK_STATUS(rc, "Reading frame");
-
-  // grab the image data
-  image_gen_.GetMetaData(image_md_);
-  const XnRGB24Pixel* rgb_data = image_md_.RGB24Data();
-
-  // convert to grayscale.
-  int num_rgb_pixels = width_ * height_;
-  for(int i=0; i<num_rgb_pixels; i++) {
-//    gray_buf[i] = (int)round((rgb_data->nRed + 
-//                              rgb_data->nGreen + 
-//                              rgb_data->nBlue) / 3.0);
-    gray_buf_[i] = (int)round(0.2125 * rgb_data->nRed + 
-                             0.7154 * rgb_data->nGreen + 
-                             0.0721 * rgb_data->nBlue);
-    rgb_data++;
+ while (freenect_process_events(f_ctx_) >= 0) {
+    if (have_image_ && have_depth_) {
+      have_image_ = false;
+      have_depth_ = false;
+      return true;
+    }
   }
+  return false;
+}
 
-  // grab the depth data
-  depth_gen_.GetMetaData(depth_md_);
-  int depth_data_nbytes = width_ * height_ * sizeof(uint16_t);
-  const uint16_t* depth_data_u16 = depth_md_.Data();
 
-  // convert to meters, and set unknown depth values to NAN
-  int num_depth_pixels = width_ * height_;
-  for(int i=0; i<num_depth_pixels; i++) {
-    uint16_t d = depth_data_u16[i];
+void KinectInter::depth_cb(freenect_device *dev, void *data, uint32_t timestamp)
+{
+  KinectInter* self = (KinectInter*)(freenect_get_user(dev));
+  self->DepthCallback(data, timestamp);
+}
+
+void KinectInter::image_cb(freenect_device *dev, void *data, uint32_t timestamp)
+{
+  KinectInter* self = (KinectInter*)(freenect_get_user(dev));
+  self->ImageCallback(data, timestamp);
+}
+
+void KinectInter::DepthCallback(void* data, uint32_t timestamp)
+{
+  have_depth_ = true;
+
+  uint16_t* depth_mm = (uint16_t*)data;
+  int num_pixels = width_ * height_;
+  for(int i=0; i<num_pixels; i++) {
+    uint16_t d = depth_mm[i];
     if(d != 0) {
       depth_data_[i] = d * 1e-3;
     } else {
       depth_data_[i] = NAN;
     }
   }
-
   depth_image_->setDepthImage(depth_data_);
-  return true;
+}
+
+void KinectInter::ImageCallback(void* data, uint32_t timestamp)
+{
+  have_image_ = true;
+
+  int num_pixels = width_ * height_;
+  uint8_t* rgb_pixel = (uint8_t*)data;
+  uint8_t* gray_pixel = gray_buf_;
+  for(int i=0; i<num_pixels; i++) {
+    gray_pixel[0] = (rgb_pixel[0] + rgb_pixel[1] + rgb_pixel[2]) / 3;
+    gray_pixel++;
+    rgb_pixel += 3;
+  }
 }

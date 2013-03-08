@@ -38,8 +38,8 @@ struct FrameData
   OdomTrans trans; 
 
   
-  boost::shared_ptr<fovis::DepthImage> depth_image;
-  std::vector<uint8_t> gray_image;
+  fovis::DepthImage* depth_image;
+  uint8_t gray_image[640*480];
 
 };
 

@@ -13,8 +13,7 @@
 
 #include "StateInformation.h"
 #include "fovis.hpp"
-#include <XnOS.h>
-#include <XnCppWrapper.h>
+#include <libfreenect/libfreenect.h>
 #include <vector>
 using std::vector;
 
@@ -29,25 +28,28 @@ class KinectInter
   bool startDataCapture();
   bool stopDataCapture();
  protected:
+  static void depth_cb(freenect_device *dev, void *data, uint32_t timestamp);
+  static void image_cb(freenect_device *dev, void *data, uint32_t timestamp);
 
-  xn::Context context_;
-  xn::EnumerationErrors errors_;
+  void DepthCallback(void* data, uint32_t timestamp);
+  void ImageCallback(void* data, uint32_t timestamp);
+  freenect_context *f_ctx_;
+  freenect_device *f_dev_;
 
-  xn::DepthGenerator depth_gen_;
-  xn::DepthMetaData depth_md_;
-  xn::ImageGenerator image_gen_;
-  xn::ImageMetaData image_md_;
+  int freenect_angle_;
+  int device_number_;
 
-  boost::shared_ptr<fovis::DepthImage> depth_image_;
+  fovis::DepthImage* depth_image_;
 
   int width_;
   int height_;
+  bool have_image_;
+  bool have_depth_;
 
   fovis::CameraIntrinsicsParameters rgb_params_;
 
   float* depth_data_;
-
-  vector<uint8_t> gray_buf_;
+  uint8_t* gray_buf_;
 };
 
 #endif
