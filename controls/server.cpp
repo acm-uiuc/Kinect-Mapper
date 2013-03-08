@@ -1,6 +1,5 @@
 // server.cpp
 // created 1-27-13
-// -> translation of server.py into cpp
 
 #include <stdio.h>
 #include <unistd.h>
@@ -45,82 +44,48 @@ Server::~Server(){
 }
 
 
-int Server::SetupServer(){
+int Server::setupServer(){
 	// set up server listening on port 'port'
 	if((serverfd = newServerSocket(port)) == -1){
 		perror("server.cpp: serverfd not set up\n");
 		return -1;
 	}
 
-	ConnectionHandler(serverfd);
-
 	return 0;
 }
 
-
-int Server::ConnectionHandler(int serverfd){
-	// accept connections
-	while(1){
-		if((acceptfd = acceptSocket(serverfd)) == -1){
-			perror("server.cpp: error accepting connection\n");
-			continue;	// drop request
-		}
+int Server::acceptConnection(){
+	if((acceptfd = acceptSocket(serverfd)) == -1){
+		perror("server.cpp: error accepting connection\n");
+		return -1;	// drop request
+	}
+	return 0;
+}
 		
-		// handle request
-		char message;
-		char garb;	// garbage
+char Server::getMessage(){
+	// handle request
+	char message;
+	char garb;	// garbage
 
-		while(true){
+	// read & display input
+	//
+	//	s - Stop		r - Right	u - speed Up
+	//	f - Forward		l - Left	d - speed Down
+	//
+	while (recv(acceptfd, &message, 1, 0) != 1)
+		continue;
 
-			// read & display input
-			//
-			//	s - Stop		r - Right	u - speed Up
-			//	f - Forward		l - Left	d - speed Down
-			//
-			while (recv(acceptfd, &message, 1, 0) != 1)
-				continue;
-
-			// ignore garbage
-			//  1 character for keypress
-			//	3 characters for keybord input (stdin)
-			for(int i = 0; i < 1; i++){
-				while(recv(acceptfd, &garb, 1, 0) != 1)
-					continue;
-			}
-	
-			printf("Received message: %c\n", message);
-	
-			SendMessageToRobot(message);
-		}
+	// ignore garbage
+	//  1 character for keypress
+	//	3 characters for keybord input (stdin)
+	for(int i = 0; i < 1; i++){
+		while(recv(acceptfd, &garb, 1, 0) != 1)
+			continue;
 	}
-}
-
-
-int Server::SendMessageToRobot(char message){
 	
-	int temp;
-	switch (message){
-	case 's':
-		bob->stop();
-		break;
-	case 'f':
-		bob->go_forward(MODE_MANUAL);
-		break;
-	case 'r':
-		bob->turn_right(MODE_MANUAL);
-		break;
-	case 'l':
-		bob->turn_left(MODE_MANUAL);
-		break;
-	case 'u':
-		bob->speed_up(MODE_MANUAL);
-		break;
-	case 'd':
-		bob->slow_down(MODE_MANUAL);
-		break;
-	}
+	printf("Received message: %c\n", message);
 
-	return 0;
+	return message;
 }
 
 

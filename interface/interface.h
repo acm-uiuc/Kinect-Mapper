@@ -22,6 +22,8 @@ class Interface{
   int run();
   void setMode(int mode);
   void passCommand(int command, int source);
+  int sendMessageToRobot(char message, int mode);
+  Server* getServer();
 
  protected:
   struct termios settings;
@@ -29,8 +31,6 @@ class Interface{
   int writeToSerial();
   static void* runServer(void* args);
   int setupArduinoConnection();
-//  void* RunPlanner();
-
   static void* arduino_data_reader(void* args);
 
   Robot* rob;

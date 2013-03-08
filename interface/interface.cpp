@@ -41,7 +41,7 @@ int Interface::run(){
 		printf("Error setting server_attr thread attributes\n");
 		return -1;
 	}
-	if(pthread_create(&server_thread_id, &server_attr, &runServer, server) != 0){
+	if(pthread_create(&server_thread_id, &server_attr, &runServer, this) != 0){
 		printf("Error creating RunServer thread (in Interface)\n");
 		return -1;
 	}
@@ -53,15 +53,54 @@ int Interface::run(){
 	return 0;
 }
 
+Server* Interface::getServer(){
+	return server;
+}	
 
 static void* runServer(void* args){
-	Server* server = (Server*) args;
-	server->SetupServer();
+	Interface* interface = (Interface*)args;
+	Server* server = interface->getServer();
+	server->setupServer();
+
+	char message;
+	while(1){
+		while(server->acceptConnection() != 0);	// keep trying
+
+		while(1){
+			message = server->getMessage();
+			interface->sendMessageToRobot(message, MODE_MANUAL);
+		}
+	}
 }
 
-/*
-static void* RunPlanner(void* args){
-}*/
+int Interface::sendMessageToRobot(char message, int mode){
+	
+	int temp;
+	int retval = 0;
+	switch (message){
+	case 's':
+		retval = rob->stop();
+		break;
+	case 'f':
+		retval = rob->go_forward(mode);
+		break;
+	case 'r':
+		retval = rob->turn_right(mode);
+		break;
+	case 'l':
+		retval = rob->turn_left(mode);
+		break;
+	case 'u':
+		retval = rob->speed_up(mode);
+		break;
+	case 'd':
+		retval = rob->slow_down(mode);
+		break;
+	}
+
+	if(retval == 1)
+		writeToSerial();
+}
 
 void Interface::passCommand(int command, int source){
 	int output = 0;

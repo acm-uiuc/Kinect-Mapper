@@ -12,12 +12,11 @@ class Server{
  public:
   Server(Robot* rob);
   Server(Robot* rob, char* pt); 
-  int SetupServer();
+  int setupServer();
+  int acceptConnection();
+  char getMessage();
   
  protected:
-  int SetupArduinoConnection();
-  int ConnectionHandler();
-  int SendMessageToRobot(char message);
   void sigINT_handler(int s);
   static void* arduino_data_reader(void* args);
 
