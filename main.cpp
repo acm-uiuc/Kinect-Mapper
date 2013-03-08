@@ -57,9 +57,9 @@ int main(int argc, char** argv)
       // Add new node to the graph
       //map.addNode(currFrame);
       // Get next movement command
-      //int cmd = planner.getNextCommand(currFrame);
+      int cmd = planner.getNextCommand(currFrame);
       // Execute command
-      // interface.passCommand(cmd, MODE_PLANNER);
+      //interface.passCommand(cmd, MODE_PLANNER);
       // Wait for command to finish
       }
     int waitlength = 2;
