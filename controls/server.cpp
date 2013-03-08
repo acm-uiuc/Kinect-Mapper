@@ -19,7 +19,7 @@ using namespace std;
 Server::Server(){
   	
 	host = "127.0.0.1";
-	port = "12345";
+	port = "12342";
 	serverfd = -2;
 	acceptfd = -2;
 }
@@ -37,19 +37,27 @@ int Server::setupServer(){
 		perror("server.cpp: serverfd not set up\n");
 		return -1;
 	}
-
-	return 0;
-}
-
-int Server::acceptConnection(){
+/*	
+	printf("Attermpting to accept on %i\n", serverfd);
 	if((acceptfd = acceptSocket(serverfd)) == -1){
-		perror("server.cpp: error accepting connection\n");
+		printf("server.cpp: error accepting connection\n");
 		return -1;	// drop request
 	}
-	return 0;
+
+	return acceptfd;*/
+	return serverfd;
+}
+
+int Server::acceptConnection(int sfd){
+	printf("Attermpting to accept on %i\n", sfd);
+	if((acceptfd = acceptSocket(sfd)) == -1){
+		printf("server.cpp: error accepting connection\n");
+		return -1;	// drop request
+	}
+	return acceptfd;
 }
 		
-char Server::getMessage(){
+char Server::getMessage(int acceptfd){
 	// handle request
 	char message;
 	char garb;	// garbage

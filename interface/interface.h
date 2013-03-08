@@ -13,8 +13,6 @@
 #define FORWARD 1
 #define NODATA -1
 
-#define LEFT 2
-#define	RIGHT -2
 
 class Interface{
  public:
@@ -25,13 +23,15 @@ class Interface{
   void setMode(int mode);
   void passCommand(int command, int source);
   int sendMessageToRobot(char message, int mode);
+  static int afd;
+  static int sfd;
+  int setupArduinoConnection();
 
  protected:
   struct termios settings;
   int createAndDetach();
   int writeToSerial();
   void* runServer(void* args);
-  int setupArduinoConnection();
   void* arduino_data_reader(void* args);
   Server* getServer();
 
@@ -46,6 +46,13 @@ class Interface{
   int BUFSIZE;
   int CNUM;
   speed_t baud;
+  
+  pthread_attr_t server_attr;
+  pthread_t server_thread_id;
+
+  pthread_attr_t attr;
+  pthread_t thread_id;
+  
 };
 
 #endif

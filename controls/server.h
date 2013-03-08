@@ -2,7 +2,6 @@
 #ifndef SERVER_H
 #define SERVER_H
 
-#include <termios.h>
 #include <unistd.h>
 #include <string>
 using std::string;
@@ -12,16 +11,14 @@ class Server{
   Server();
   ~Server();
   int setupServer();
-  int acceptConnection();
-  char getMessage();
+  int acceptConnection(int serverfd);
+  char getMessage(int acceptfd);
   
  protected:
   char* port;
   string host;
   int serverfd;
   int acceptfd;
-
-  struct termios settings;
 };
 
 #endif

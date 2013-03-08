@@ -66,7 +66,7 @@ foreach(KIN_LIB_NAME ${KINECT_MAPPER_COMPONENTS})
 endforeach()
 
 add_executable(kinect_mapper main.cpp)
-target_link_libraries(kinect_mapper ${KIN_LIBS})
+target_link_libraries(kinect_mapper ${KIN_LIBS} pthread)
 set(KIN_LIB_NAME quadtree_test)
 add_subdirectory(${PROJECT_SOURCE_DIR}/test)
 

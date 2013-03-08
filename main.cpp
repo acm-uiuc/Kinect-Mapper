@@ -5,8 +5,24 @@
 #include "planning.h"
 #include "interface.h"
 #include <unistd.h>
+#include <pthread.h>
+#include <stdio.h>
+
 using std::cout;
 using std::endl;
+
+static void* serverThread(void* args){
+    Interface* interface = (Interface*)args;
+	interface->run();
+	pthread_exit(NULL);
+}
+
+static void* arduinoThread(void* args){
+	Interface* interface = (Interface*)args;
+	interface->setupArduinoConnection();
+	pthread_exit(NULL);
+}
+
 
 int main(int argc, char** argv)
 {
@@ -41,8 +57,26 @@ int main(int argc, char** argv)
   
   RGBDVisOdometry odom(rgb_params);
   MapperPathPlanner planner(width,height);
-  //Interface interface;
-  //interface.run();
+
+  Interface* interface = new Interface();
+
+  pthread_t ard_id;
+  pthread_attr_t ard_attr;
+  if(pthread_attr_init(&ard_attr) != 0)
+    printf("Error setting thread attributes.\n");
+  if(pthread_create(&ard_id, &ard_attr, arduinoThread, interface) != 0)
+    printf("Error arduino_data_reader thread.\n");
+  while(pthread_detach(ard_id) != 0)
+    printf("Error detaching thread\n");
+
+  pthread_t thread_id;
+  pthread_attr_t attr;
+  if(pthread_attr_init(&attr) != 0)
+    printf("Error setting thread attributes.\n");
+  if(pthread_create(&thread_id, &attr, serverThread, interface) != 0)
+    printf("Error arduino_data_reader thread.\n");
+  while(pthread_detach(thread_id) != 0)
+    printf("Error detaching thread\n");
 
   while (currStep < totalSteps) {
     // Get RGBD data from current frame
@@ -69,5 +103,6 @@ int main(int argc, char** argv)
     currStep++;
   }
   camera.stopDataCapture();
+  pthread_exit(NULL);
   return 0;
 }

@@ -11,6 +11,9 @@
 #include <sys/socket.h>
 #include <stdlib.h>
 
+int Interface::afd = -2;
+int Interface::sfd = -2;
+
 Interface::Interface(){
 	rob = new Robot();
 	port = new char[5];
@@ -18,59 +21,43 @@ Interface::Interface(){
 
 	CNUM = 128;     // correction number for sending data to arduino
 
-	server = new Server();
 //	planner = plan;
 }
 
 Interface::~Interface(){
-	delete rob;
-	delete server;
-	free(buf);
-	delete port;
+	if(rob != NULL)
+		delete rob;
+	if(server != NULL)
+		delete server;
+	if(port != NULL)
+		delete port;
 }
 
 int Interface::run(){
+	server = new Server();
  	// start communication channel with arduino
 	setupArduinoConnection();
 
-	// start server thread
-	pthread_attr_t server_attr;
-	pthread_t server_thread_id;
+    // start server 
+	sfd = server->setupServer();
+	char message;
 
-	if(pthread_attr_init(&server_attr) != 0){
-		printf("Error setting server_attr thread attributes\n");
-		return -1;
-	}
-	if(pthread_create(&server_thread_id, &server_attr, (void* (*)(void*))&Interface::runServer, (void*)this) != 0){
-		printf("Error creating RunServer thread (in Interface)\n");
-		return -1;
-	}
-	while(pthread_detach(server_thread_id) != 0){
-		printf("Error detaching thread\n");
-		return -1;
+	while(1){
+		printf("Attempting to accept connection.\n");
+		while((afd = server->acceptConnection(sfd)) <= 0)	// keep trying
+			printf("afd: %i\n", afd);
+		printf("afd: %i\n", afd);
+
+		while(1){
+			printf("Attempting to get message\n");
+			message = server->getMessage(afd);
+			sendMessageToRobot(message, MODE_MANUAL);
+		}
 	}
 
 	return 0;
 }
 
-Server* Interface::getServer(){
-	return server;
-}
-
-void* Interface::runServer(void* args){
-	Interface* interface = (Interface*) args;
-	Server* server = interface->getServer();
-
-	char message;
-	while(1){
-		while(server->acceptConnection() != 0);	// keep trying
-
-		while(1){
-			message = server->getMessage();
-			interface->sendMessageToRobot(message, MODE_MANUAL);
-		}
-	}
-}
 
 int Interface::sendMessageToRobot(char message, int mode){
 	
@@ -108,14 +95,8 @@ void Interface::passCommand(int command, int source){
 		output = rob->stop();
 		break;
 	case FORWARD:
-	        output = rob->go_forward(source);
+		output = rob->go_forward(source);
 		break;
-	case LEFT:
-	        output = rob->turn_left(source);
-	        break;
-	case RIGHT:
-	       output = rob->turn_right(source);
-	        break;
 	case NODATA:
 		output = rob->turn_right(source);
 		break;
@@ -156,8 +137,8 @@ int Interface::writeToSerial(){
 
 int Interface::setupArduinoConnection(){
 	// open port for communication with arduino
-	if((ser = open("/dev/ttyACM1", O_RDWR | O_NOCTTY | O_NDELAY)) < 0){
-		printf("Unable to open port /dev/ttyACM1\n");
+	if((ser = open("/dev/ttyACM0", O_RDWR | O_NOCTTY | O_NDELAY)) < 0){
+		printf("Unable to open port /dev/ttyACM0\n");
 		return -1;
 	}
 
@@ -195,11 +176,11 @@ int Interface::setupArduinoConnection(){
 	printf("Port is now open.\n");
 	
 	// start reading data from arduino
-	pthread_attr_t attr;
+	
 	if(pthread_attr_init(&attr) != 0){
 		printf("Error setting thread attributes.\n");
 	}
-	pthread_t thread_id;
+	
 	int* s = new int();
 	*s = ser;
 	if(pthread_create(&thread_id, &attr, (void* (*)(void*))&Interface::arduino_data_reader, (void*)(s)) != 0)
@@ -208,6 +189,7 @@ int Interface::setupArduinoConnection(){
 	while(pthread_detach(thread_id) != 0)
 		printf("Error detaching thread\n");
 
+	pthread_exit(NULL);
 	return 0;
 }
 
@@ -244,5 +226,5 @@ void* Interface::arduino_data_reader(void* args){
 	}
 	delete s;
 
-	return NULL;
+	pthread_exit(NULL);
 }
