@@ -80,8 +80,8 @@ char MapperPathPlanner::getNextCommand(FrameDataPtr currFrame)
 	  RandTurn = true;
 	  return RIGHT;
 	}
-      current_direction=BLOCKED;
-      return STOP;
+      current_direction=turn();
+      return current_direction;
     }
   if (RandTurn)
     {

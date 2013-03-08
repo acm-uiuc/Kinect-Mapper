@@ -12,6 +12,8 @@
 #define STOP 0
 #define FORWARD 1
 #define NODATA -1
+#define LEFT 2
+#define RIGHT -2
 
 
 class Interface{

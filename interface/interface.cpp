@@ -97,9 +97,13 @@ void Interface::passCommand(int command, int source){
 	case FORWARD:
 		output = rob->go_forward(source);
 		break;
-	case NODATA:
+	case RIGHT:
 		output = rob->turn_right(source);
 		break;
+	case LEFT:
+	  output = rob->turn_left(source);
+	  break;
+	  
 	}
 
 	if(output == 1)

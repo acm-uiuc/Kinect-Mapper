@@ -78,6 +78,8 @@ int main(int argc, char** argv)
   while(pthread_detach(thread_id) != 0)
     printf("Error detaching thread\n");
 
+  char lastcmd = '{';
+  bool  needsUpdate = false;
   while (currStep < totalSteps) {
     // Get RGBD data from current frame
     if (camera.captureOne()) {
@@ -93,8 +95,19 @@ int main(int argc, char** argv)
       //map.addNode(currFrame);
       // Get next movement command
       char cmd = planner.getNextCommand(currFrame);
+      cout << cmd << endl;
       // Execute command
-      //interface.passCommand(cmd, MODE_PLANNER);
+      if (cmd != lastcmd) {
+	interface->passCommand(cmd, MODE_PLANNER);
+	lastcmd = cmd;
+	needsUpdate = true;
+      }
+      else {
+	if (needsUpdate) {
+	  interface->passCommand(cmd,MODE_PLANNER);
+	  needsUpdate = false;
+	}
+      }
       // Wait for command to finish
     }
     int waitlength = 2;
@@ -102,6 +115,8 @@ int main(int argc, char** argv)
     // Prepare for next iteration
     currStep++;
   }
+
+  interface->passCommand(0,MODE_PLANNER);  
   camera.stopDataCapture();
   pthread_exit(NULL);
   return 0;

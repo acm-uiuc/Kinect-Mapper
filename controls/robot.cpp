@@ -11,7 +11,7 @@ Robot::Robot(){
 	vr = 0;
 	accel = DEFAULT_ACCEL;
 
-	mode = MODE_MANUAL;
+	mode = MODE_PLANNER;
 }
 
 Robot::~Robot(){
@@ -32,8 +32,9 @@ int Robot::stop(){
 
 int Robot::go_forward(int m){
 	if(mode == m){
-		int vel = vl >= 0 ? vl : 0 - vl;
-		vr = vl = vel > 0 ? vel : accel;
+	  //int vel = vl >= 0 ? vl : 0 - vl;
+	  //vr = vl = vel > 0 ? vel : accel;
+	  vl=vr=16;
 		return 1;
 	}
 	return 0;
