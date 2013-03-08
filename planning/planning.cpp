@@ -95,3 +95,4 @@ int MapperPathPlanner::turn(){
   if (rand() %2)
     {return LEFT;}
   return RIGHT;
+}
