@@ -26,9 +26,9 @@ class MapperPathPlanner
   int width_;
   int height_;
 
-  int NODATA = -1;
-  int STOP = 0;
-  int FORWARD = 1;
+  int NODATA;
+  int STOP;
+  int FORWARD;
 };
 
 #endif

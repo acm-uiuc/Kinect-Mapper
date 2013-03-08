@@ -21,6 +21,10 @@ MapperPathPlanner::MapperPathPlanner()
 
 	width_ = 640;
 	height_ = 480;
+
+	NODATA = -1;
+	STOP = 0;
+	FORWARD = 1;
 }
 
 MapperPathPlanner::~MapperPathPlanner()
