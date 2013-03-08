@@ -156,7 +156,9 @@ int Interface::setupArduinoConnection(){
 		printf("Error setting thread attributes.\n");
 	}
 	pthread_t thread_id;
-	if(pthread_create(&thread_id, &attr, &arduino_data_reader, (void*)ser) != 0)
+	int* s = new int();
+	*s = ser;
+	if(pthread_create(&thread_id, &attr, &arduino_data_reader, (void*)(s)) != 0)
 		printf("Error arduino_data_reader thread.\n");
 
 	while(pthread_detach(thread_id) != 0)
@@ -169,7 +171,8 @@ int Interface::setupArduinoConnection(){
 // handle information coming in from arduino
 static void* arduino_data_reader(void* args){
 
-	int ser = (int)(args);
+	int* s = (int*)(args);
+	int ser = *s;
 	
     char* buf = (char*) malloc(100);
 	int BUFSIZE = 100;
@@ -195,6 +198,7 @@ static void* arduino_data_reader(void* args){
 		read(ser, buf, BUFSIZE);
 		printf("%s", buf);
 	}
+	delete s;
 
 	return NULL;
 }
