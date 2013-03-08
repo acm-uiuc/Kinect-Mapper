@@ -19,8 +19,6 @@ using namespace std;
 
 int serverfd;
 
-Robot bob = new Robot();
-
 char* buf;
 size_t BUFSIZE = 100;
 
@@ -79,6 +77,8 @@ static void* arduino_data_reader(void* args){
 // main server function
 int main(int argc, char *argv[]){
 
+	Robot* bob = new Robot();
+	
 	string host = "127.0.0.1";
 	char port[] = "12344";
 	serverfd = -2;
@@ -197,33 +197,33 @@ int main(int argc, char *argv[]){
 			printf("Received message: %c\n", message);
 	
 			// send input to robot
-			int vel = (bob.get_vel_left() >= 0 ? bob.get_vel_left() : 0-bob.get_vel_left());
+			int vel = (bob->get_vel_left() >= 0 ? bob->get_vel_left() : 0-bob->get_vel_left());
 			int temp;
 			switch (message){
 			case 's':
-				bob.stop();
+				bob->stop();
 				break;
 			case 'f':
-				bob.go_forward(vel);
+				bob->go_forward(vel);
 				break;
 			case 'r':
-				bob.turn_right(vel);
+				bob->turn_right(vel);
 				break;
 			case 'l':
-				bob.turn_left(vel);
+				bob->turn_left(vel);
 				break;
 			case 'u':
-				bob.speed_up();
+				bob->speed_up();
 				break;
 			case 'd':
-				bob.slow_down();
+				bob->slow_down();
 				break;
 			}
 		
 			
 			// write to serial
-			char d1 = (char) (bob.get_vel_left() + (int)CNUM);
-			char d2 = (char) (bob.get_vel_right() + (int)CNUM);
+			char d1 = (char) (bob->get_vel_left() + (int)CNUM);
+			char d2 = (char) (bob->get_vel_right() + (int)CNUM);
 			int err;
 			
 			if(write(ser, &d1, 1) == 1)
