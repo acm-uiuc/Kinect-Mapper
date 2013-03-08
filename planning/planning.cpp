@@ -11,6 +11,8 @@
 #include "fovis.hpp"
 #include "frame.hpp"
 #include "pyramid_level.hpp"
+#include <stdlib.h>     /* srand, rand */
+#include <time.h>       /* time */
 
 using namespace fovis;
 
@@ -25,6 +27,11 @@ MapperPathPlanner::MapperPathPlanner()
 	NODATA = -1;
 	STOP = 0;
 	FORWARD = 1;
+	LEFT=2;
+	RIGHT=-2;
+	current_direction=STOP;
+	srand(time(NULL));
+
 }
 
 MapperPathPlanner::~MapperPathPlanner()
@@ -74,6 +81,8 @@ char MapperPathPlanner::getNextCommand(FrameDataPtr currFrame)
 {
   if (currFrame == NULL)
     return NODATA;
+  if(current_direction==STOP)
+    turn();
   if (!canMove(currFrame))
   	return STOP;
 
@@ -81,3 +90,8 @@ char MapperPathPlanner::getNextCommand(FrameDataPtr currFrame)
 
   return FORWARD;
 }
+
+int MapperPathPlanner::turn(){
+  if (rand() %2)
+    {return LEFT;}
+  return RIGHT;
