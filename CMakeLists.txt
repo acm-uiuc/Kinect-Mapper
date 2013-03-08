@@ -40,11 +40,12 @@ add_subdirectory(${FOVIS_DIR})
 
 set(KINECT_MAPPER_COMPONENTS utilities
                              graph
-			     odometry
-			     planning
-			     controls
-			     #quadtree
-			     )
+						     odometry
+						     planning
+						     controls
+							 interface
+			    			 #quadtree
+				    		 )
 
 foreach(DIR ${KINECT_MAPPER_COMPONENTS})
   set(KINECT_MAPPER_SRC_DIRS ${KINECT_MAPPER_SRC_DIRS} 
