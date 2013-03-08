@@ -85,7 +85,7 @@ char MapperPathPlanner::getNextCommand(FrameDataPtr currFrame)
     }
   if (RandTurn)
     {
-      if (rand() % 10) //change if called more then expected
+      if (rand() % 100) //change if called more (or less) then expected
 	{
 	  RandTurn =false;
 	  current_direction =turn();
