@@ -68,7 +68,11 @@ char MapperPathPlanner::getNextCommand(FrameDataPtr currFrame)
     return current_direction;
     }
   if (!canMove(currFrame))
-    {
+    { //if I am still blocked keep going the same way
+      if (current_direction==LEFT)
+	{return LEFT;}
+      else if (current_direction==RIGHT)
+	{return RIGHT;}
       current_direction=BLOCKED;
       return STOP;
     }
