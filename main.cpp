@@ -3,6 +3,7 @@
 #include "odometry.h"
 #include "graph.h"
 #include "planning.h"
+#include "interface.h"
 #include <unistd.h>
 using std::cout;
 using std::endl;
@@ -39,6 +40,8 @@ int main(int argc, char** argv)
   
   RGBDVisOdometry odom(rgb_params);
   MapperPathPlanner planner;
+  Interface interface;
+  interface.run();
 
   while (currStep < totalSteps) {
     // Get RGBD data from current frame
@@ -56,7 +59,7 @@ int main(int argc, char** argv)
       // Get next movement command
       //int cmd = planner.getNextCommand(currFrame);
       // Execute command
-      // TODO: add call to arduino to execute command
+      // interface.passCommand(cmd, MODE_PLANNER);
       // Wait for command to finish
       //}
     int waitlength = 3;

@@ -1,7 +1,6 @@
 // @author Alex Burck
 // @email  burck1@illinois.edu
 
-#include "quadtree.h"
 #include "robot.h"
 
 #define DEFAULT_ACCEL 4
@@ -11,6 +10,8 @@ Robot::Robot(){
 	vl = 0;
 	vr = 0;
 	accel = DEFAULT_ACCEL;
+
+	mode = MODE_MANUAL;
 }
 
 Robot::~Robot(){
@@ -24,30 +25,62 @@ int Robot::get_vel_right(){
 	return vr;
 }
 
-void Robot::stop(){
+int Robot::stop(){
 	vl = vr = 0;
+	return 1;
 }
 
-void Robot::go_forward(int vel){
-	vr = vl = vel > 0 ? vel : accel;
+int Robot::go_forward(int m){
+	if(mode == m){
+		int vel = vl >= 0 ? vl : 0 - vl;
+		vr = vl = vel > 0 ? vel : accel;
+		return 1;
+	}
+	return 0;
 }
 
-void Robot::turn_right(int vel){
-	vr = 0 - vel;
-	vl = vel;
+int Robot::turn_right(int m){
+	if(mode == m){
+		int vel = vl >= 0 ? vl : 0 - vl;
+		vr = 0 - vel;
+		vl = vel;
+		return 1;
+	}
+	return 0;
 }
 
-void Robot::turn_left(int vel){
-	vr = vel;
-	vl = 0 - vel;
+int Robot::turn_left(int m){
+	if(mode == m){
+		int vel = vl >= 0 ? vl : 0 - vl;
+		vr = vel;
+		vl = 0 - vel;
+		return 1;
+	}
+	return 0;
 }
 
-void Robot::speed_up(){
-	vr += vr >= 0 ? accel : 0 - accel;
-	vl += vl >= 0 ? accel : 0 - accel;
+int Robot::speed_up(int m){
+	if(mode == m){
+		vr += vr >= 0 ? accel : 0 - accel;
+		vl += vl >= 0 ? accel : 0 - accel;
+		return 1;
+	}
+	return 0;
 }
 
-void Robot::slow_down(){
-	vr -= vr >= 0 ? accel : 0- accel;
-	vl -= vl >= 0 ? accel : 0- accel;
+int Robot::slow_down(int m){
+	if(mode == m){
+		vr -= vr >= 0 ? accel : 0- accel;
+		vl -= vl >= 0 ? accel : 0- accel;
+		return 1;
+	}
+	return 0;
+}
+
+void Robot::set_mode(int m){
+	mode = m;
+}
+
+int Robot::get_mode(){
+	return mode;
 }

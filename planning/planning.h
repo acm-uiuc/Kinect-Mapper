@@ -20,6 +20,7 @@ class MapperPathPlanner
   char getNextCommand(FrameDataPtr);
   bool canMove(FrameDataPtr);
  protected:
+  int turn();
   //enum Command{STOP, NOCHANGE, FORWARD, BACKWARD, RTURN, LTURN, SUP, SDOWN};
   float minDepth;    
   int depthSumThreshold;
@@ -29,6 +30,11 @@ class MapperPathPlanner
   int NODATA;
   int STOP;
   int FORWARD;
+  int LEFT;
+  int RIGHT;
+  int current_direction;
+  int BLOCKED;
+
 };
 
 #endif
