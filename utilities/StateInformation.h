@@ -35,12 +35,23 @@ struct OdomTrans
  */
 struct FrameData
 {
-  OdomTrans trans; 
+  FrameData() 
+  {
+    gray_image = new uint8_t[640*480];
+    depth_data = new float[640*480];
+    depth_image = NULL;
+  }
 
-  
+  ~FrameData()
+  {
+    delete[] depth_data;
+    delete[] gray_image;
+  }
+
+  OdomTrans trans;
+  float* depth_data;
   fovis::DepthImage* depth_image;
-  uint8_t gray_image[640*480];
-
+  uint8_t* gray_image;
 };
 
 typedef boost::shared_ptr<FrameData> FrameDataPtr;

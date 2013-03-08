@@ -25,7 +25,7 @@ class RGBDVisOdometry
    * Constructor, initializes the default values for 
    * \param[in] camera input camera parameters for kinect interface
    */
-  RGBDVisOdometry(const KinectInter& camera);
+  RGBDVisOdometry(const fovis::Rectification& rect);
 
   /** \brief
    * Deconstructor, frees any allocated memory 
@@ -37,21 +37,21 @@ class RGBDVisOdometry
    * \param[in] currFrame the frame of the position of the robot to base the estimate from
    * \return the transformation from the previous frame to the current one
    */
-  OdomTrans& getMotionEstimate(FrameDataPtr currFrame);
+  OdomTransPtr getMotionEstimate(FrameDataPtr currFrame);
 
   /** \brief
    * Gets the current pose estimate of the robot
    * \param[in] currFrame the frame of the position of the robot to base the estimate from
    * \return the transformation containing the pose data
    */
-  OdomTrans& getPose(FrameDataPtr currFrame);
+  OdomTransPtr getPose(FrameDataPtr currFrame);
 
   /** \brief
    * Converts Eigen Isometry3d type to the OdomTrans type
    * \param[in] odomInfo contains the Isometry3d type to convert
    * \return the transformation containing Isometry3d information
    */
-  OdomTrans& Isometry3DToOdomTrans(Eigen::Isometry3d odomInfo);
+  OdomTransPtr Isometry3DToOdomTrans(Eigen::Isometry3d odomInfo);
  protected:
   boost::shared_ptr<fovis::VisualOdometry>  Odom_;
 };

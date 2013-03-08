@@ -9,9 +9,6 @@
 #include "kinect_interface.h"
 #include <cstdio>
 
-#define CHECK_STATUS(rc, msg) if((rc) != XN_STATUS_OK) { \
-  fprintf(stderr, "%s: %s\n", (msg), xnGetStatusString(rc)); return false; }
-
 KinectInter::KinectInter()
 {
   width_ = 640;
@@ -47,8 +44,10 @@ KinectInter::~KinectInter()
 FrameDataPtr KinectInter::getFrame()
 {
   FrameDataPtr framePtr(new FrameData);
+  //framePtr->depth_image = new fovis::DepthImage(*depth_image_);
   framePtr->depth_image = depth_image_;
-  memcpy(gray_buf_,framePtr->gray_image,width_ * height_ * sizeof(uint8_t));
+  memcpy(framePtr->gray_image,gray_buf_,width_*height_*sizeof(uint8_t));
+  memcpy(framePtr->depth_data,depth_data_,width_*height_*sizeof(float));
   return framePtr;
 }
 

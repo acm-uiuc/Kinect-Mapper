@@ -16,11 +16,12 @@ using namespace fovis;
 
 MapperPathPlanner::MapperPathPlanner()
 {
-	minDepth = 1.0;		// min depth to object in meters
-	depthSumThreshold = 20;
-
-	width_ = 640;
+        width_ = 640;
 	height_ = 480;
+	minDepth = 1.0;		// min depth to object in meters
+	depthSumThreshold = (width_*height_)/2;
+
+	
 
 	NODATA = -1;
 	STOP = 0;
@@ -37,36 +38,15 @@ bool MapperPathPlanner::canMove(FrameDataPtr currFrame){
 	bool canMove = true;
 	// determine whether there is something ahead
 	float minDepthSum = 0;
-	CameraIntrinsicsParameters rgb_params;
-	rgb_params.width = width_;
-	rgb_params.height = height_;
-	rgb_params.fx = 528.49404721; 
-	rgb_params.fy = rgb_params.fx;
-	rgb_params.cx = width_ / 2.0;
-	rgb_params.cy = height_ / 2.0;
-	Rectification rect(rgb_params);
-	OdometryFrame frame(&rect,VisualOdometry::getDefaultOptions());
-	if(currFrame->depth_image != NULL)
-		(currFrame->depth_image->getXyz(&frame));
-	else
-		return false;
-	PyramidLevel* image_data;
-	if(frame.getNumLevels() > 0)
-		image_data = frame.getLevel(0);
-	else
-		return false;
-	
-	for(int i = 0; i < image_data->getNumKeypoints(); i++){
-		if(image_data->getKeypointData(i)->xyz.z() <= minDepth)
+	for(int i = 0; i < width_*height_; i++){
+	  if(currFrame->depth_data[i] <= minDepth || isnan(currFrame->depth_data[i]))
 			minDepthSum += 1;
 		// TODO: handle unknown values (only vals b/n .8 and 4m record normally)
-
 		if(minDepthSum > depthSumThreshold){
 			canMove = false;
 			break;
 		}
 	}
-
 	return canMove;
 }
 
