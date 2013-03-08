@@ -32,18 +32,27 @@ MapperPathPlanner::~MapperPathPlanner()
 }
 
 bool MapperPathPlanner::canMove(FrameDataPtr currFrame){
+  if (!currFrame)
+    return false;
 	bool canMove = true;
-
 	// determine whether there is something ahead
 	float minDepthSum = 0;
-	OdometryFrame* frame;
+	CameraIntrinsicsParameters rgb_params;
+	rgb_params.width = width_;
+	rgb_params.height = height_;
+	rgb_params.fx = 528.49404721; 
+	rgb_params.fy = rgb_params.fx;
+	rgb_params.cx = width_ / 2.0;
+	rgb_params.cy = height_ / 2.0;
+	Rectification rect(rgb_params);
+	OdometryFrame frame(&rect,VisualOdometry::getDefaultOptions());
 	if(currFrame->depth_image != NULL)
-		(currFrame->depth_image->getXyz(frame));
+		(currFrame->depth_image->getXyz(&frame));
 	else
 		return false;
 	PyramidLevel* image_data;
-	if(frame != NULL && frame->getNumLevels() > 0)
-		image_data = frame->getLevel(0);
+	if(frame.getNumLevels() > 0)
+		image_data = frame.getLevel(0);
 	else
 		return false;
 	

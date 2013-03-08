@@ -4,6 +4,8 @@
 #include "graph.h"
 #include "planning.h"
 #include <unistd.h>
+using std::cout;
+using std::endl;
 
 int main(int argc, char** argv)
 {
@@ -17,26 +19,40 @@ int main(int argc, char** argv)
   
   VisGraph map;
   KinectInter camera;
-  RGBDVisOdometry odom(camera);
+  if (!camera.initialize()) {
+    cout << "Camera Initialization Failed." << endl;
+    return 1;
+  }
+  if (!camera.startDataCapture()) {
+    cout << "Unable to start capturing data" << endl;
+    return 1;
+  }
+  //RGBDVisOdometry odom(camera);
   MapperPathPlanner planner;
 
   while (currStep < totalSteps) {
     // Get RGBD data from current frame
-    FrameDataPtr currFrame = camera.getFrame();
-    // Get Transformation from previous frame
-    odom.getMotionEstimate(currFrame);
-    // Add new node to the graph
-    map.addNode(currFrame);
-    // Get next movement command
-    int cmd = planner.getNextCommand(currFrame);
-    // Execute command
-    // TODO: add call to arduino to execute command
-    // Wait for command to finish
+    if (camera.captureOne()) {
+      FrameDataPtr currFrame = camera.getFrame();
+      // Get Transformation from previous frame
+      // odom.getMotionEstimate(currFrame);
+      if (planner.canMove(currFrame))
+	cout << "Can Move" << endl;
+      else
+	cout << "Can't move" << endl;
+      // Add new node to the graph
+      //map.addNode(currFrame);
+      // Get next movement command
+      //int cmd = planner.getNextCommand(currFrame);
+      // Execute command
+      // TODO: add call to arduino to execute command
+      // Wait for command to finish
+    }
     int waitlength = 5;
     sleep(waitlength);
     // Prepare for next iteration
     currStep++;
   }
-
+  camera.stopDataCapture();
   return 0;
 }

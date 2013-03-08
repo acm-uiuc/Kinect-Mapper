@@ -19,6 +19,20 @@ else()
     endif()
 endif()
 
+find_path(LIBFREENECT_INCLUDE_DIRS
+    NAMES libfreenect.h
+    PATH_SUFFIXES libfreenect)
+if("${LIBFREENECT_INCLUDE_DIRS}" STREQUAL "LIBFREENECT_INCLUDE_DIRS-NOTFOUND")
+    set(LIBFREENECT_EXAMPLE_MESSAGE "Disabled - libfreenect.h not found")
+else()
+    find_library(LIBFREENECT_LIBS freenect HINTS /usr/local/lib64)
+    if("${LIBFREENECT_LIBS}" STREQUAL "LIBFREENECT_LIBS-NOTFOUND")
+        set(LIBFREENECT_EXAMPLE_MESSAGE "Disabled - libfreenect not found")
+    else()
+        set(LIBFREENECT_EXAMPLE_MESSAGE "Enabled")
+    endif()
+endif()
+
 include_directories(${OPENNI_INCLUDE_DIRS})
 
 set(FOVIS_DIR ${PROJECT_SOURCE_DIR}/libfovis)
@@ -26,11 +40,12 @@ add_subdirectory(${FOVIS_DIR})
 
 set(KINECT_MAPPER_COMPONENTS utilities
                              graph
-			     odometry
-			     planning
-			     controls
-			     #quadtree
-			     )
+						     odometry
+						     planning
+						     controls
+							 interface
+			    			 #quadtree
+				    		 )
 
 foreach(DIR ${KINECT_MAPPER_COMPONENTS})
   set(KINECT_MAPPER_SRC_DIRS ${KINECT_MAPPER_SRC_DIRS} 
@@ -42,7 +57,7 @@ include_directories(${KINECT_MAPPER_SRC_DIRS}
 		    ${FOVIS_DIR}/libfovis
 		    ${PROJECT_SOURCE_DIR}/quadtree
 		    )
-set(KIN_LIBS fovis ${OPENNI_LIBS})
+set(KIN_LIBS fovis ${OPENNI_LIBS} ${LIBFREENECT_LIBS})
 set(DOC_SOURCE_DIR "${PROJECT_SOURCE_DIR}")
 foreach(KIN_LIB_NAME ${KINECT_MAPPER_COMPONENTS})
   add_subdirectory(${PROJECT_SOURCE_DIR}/${KIN_LIB_NAME})
