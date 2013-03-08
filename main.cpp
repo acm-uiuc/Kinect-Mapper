@@ -40,16 +40,16 @@ int main(int argc, char** argv)
   
   RGBDVisOdometry odom(rgb_params);
   MapperPathPlanner planner;
-  Interface interface;
-  interface.run();
+  //Interface interface;
+  //interface.run();
 
   while (currStep < totalSteps) {
     // Get RGBD data from current frame
-    //if (camera.captureOne()) {
+    if (camera.captureOne()) {
       FrameDataPtr currFrame = camera.getFrame();
       
       // Get Transformation from previous frame
-      odom.getMotionEstimate(currFrame);
+      //odom.getMotionEstimate(currFrame);
       if (planner.canMove(currFrame))
 	cout << "Can Move" << endl;
       else
@@ -61,8 +61,8 @@ int main(int argc, char** argv)
       // Execute command
       // interface.passCommand(cmd, MODE_PLANNER);
       // Wait for command to finish
-      //}
-    int waitlength = 3;
+      }
+    int waitlength = 2;
     sleep(waitlength);
     // Prepare for next iteration
     currStep++;
