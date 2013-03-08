@@ -23,15 +23,15 @@ class Interface{
   void setMode(int mode);
   void passCommand(int command, int source);
   int sendMessageToRobot(char message, int mode);
-  Server* getServer();
 
  protected:
   struct termios settings;
   int createAndDetach();
   int writeToSerial();
-  static void* runServer(void* args);
+  void* runServer(void* args);
   int setupArduinoConnection();
-  static void* arduino_data_reader(void* args);
+  void* arduino_data_reader(void* args);
+  Server* getServer();
 
   Robot* rob;
   Server* server;

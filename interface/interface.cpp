@@ -18,7 +18,7 @@ Interface::Interface(){
 
 	CNUM = 128;     // correction number for sending data to arduino
 
-	server = new Server(rob);
+	server = new Server();
 //	planner = plan;
 }
 
@@ -41,7 +41,7 @@ int Interface::run(){
 		printf("Error setting server_attr thread attributes\n");
 		return -1;
 	}
-	if(pthread_create(&server_thread_id, &server_attr, &runServer, this) != 0){
+	if(pthread_create(&server_thread_id, &server_attr, (void* (*)(void*))&Interface::runServer, (void*)this) != 0){
 		printf("Error creating RunServer thread (in Interface)\n");
 		return -1;
 	}
@@ -55,12 +55,11 @@ int Interface::run(){
 
 Server* Interface::getServer(){
 	return server;
-}	
+}
 
-static void* runServer(void* args){
-	Interface* interface = (Interface*)args;
+void* Interface::runServer(void* args){
+	Interface* interface = (Interface*) args;
 	Server* server = interface->getServer();
-	server->setupServer();
 
 	char message;
 	while(1){
@@ -197,7 +196,7 @@ int Interface::setupArduinoConnection(){
 	pthread_t thread_id;
 	int* s = new int();
 	*s = ser;
-	if(pthread_create(&thread_id, &attr, &arduino_data_reader, (void*)(s)) != 0)
+	if(pthread_create(&thread_id, &attr, (void* (*)(void*))&Interface::arduino_data_reader, (void*)(s)) != 0)
 		printf("Error arduino_data_reader thread.\n");
 
 	while(pthread_detach(thread_id) != 0)
@@ -208,7 +207,7 @@ int Interface::setupArduinoConnection(){
 
 
 // handle information coming in from arduino
-static void* arduino_data_reader(void* args){
+void* Interface::arduino_data_reader(void* args){
 
 	int* s = (int*)(args);
 	int ser = *s;

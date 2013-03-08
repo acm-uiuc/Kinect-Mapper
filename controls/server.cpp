@@ -16,31 +16,18 @@
 
 using namespace std;
 
-Server::Server(Robot* rob){
+Server::Server(){
   	
 	host = "127.0.0.1";
-	port = "12345"
+	port = "12345";
 	serverfd = -2;
 	acceptfd = -2;
-
-	bob = rob;
-
-	// set up interrupt handler
-	signal(2, &sigINT_handler); // 2 = SIGINT
-}
-
-Server::Server(Robot* rob, char[] pt){
-	super(rob);
-
-	port = pt;
 }
 
 
 Server::~Server(){
   	if(serverfd > -1)
-    	closeSocket(Serverfd);
-
-	free(buf);
+    	closeSocket(serverfd);
 }
 
 
@@ -86,17 +73,4 @@ char Server::getMessage(){
 	printf("Received message: %c\n", message);
 
 	return message;
-}
-
-
-// handle interrupts:
-// -close socket connection
-// -exit
-void sigINT_handler(int s){
-	if(serverfd > -1)
-		closeSocket(serverfd);
-
-	close(ser);
-	free(buf);
-	exit(1);
 }
