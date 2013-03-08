@@ -7,6 +7,7 @@
 class Robot {
 	public:
 		Robot();
+		~Robot();
 		
 		int get_vel_left();
 		int get_vel_right();

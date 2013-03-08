@@ -2,6 +2,7 @@
 // @email  burck1@illinois.edu
 
 #include "quadtree.h"
+#include "robot.h"
 
 #define DEFAULT_ACCEL 4
 
@@ -10,6 +11,9 @@ Robot::Robot(){
 	vl = 0;
 	vr = 0;
 	accel = DEFAULT_ACCEL;
+}
+
+Robot::~Robot(){
 }
 
 int Robot::get_vel_left(){
