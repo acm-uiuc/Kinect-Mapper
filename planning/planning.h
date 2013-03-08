@@ -34,6 +34,7 @@ class MapperPathPlanner
   int RIGHT;
   int current_direction;
   int BLOCKED;
+  bool RandTurn;
 
 };
 
