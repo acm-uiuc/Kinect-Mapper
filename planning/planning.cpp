@@ -33,6 +33,7 @@ MapperPathPlanner::MapperPathPlanner(int width, int height)
 	current_direction=STOP;
 	BLOCKED=6;
 	srand(time(NULL));
+	RandTurn=false;
 
 }
 
@@ -68,11 +69,29 @@ char MapperPathPlanner::getNextCommand(FrameDataPtr currFrame)
     return current_direction;
     }
   if (!canMove(currFrame))
-    {
+    { //if I am still blocked keep going the same way and schedule a random turn  
+      if (current_direction==LEFT)
+	{
+	  RandTurn = true;
+	  return LEFT;
+	}
+      else if (current_direction==RIGHT)
+	{
+	  RandTurn = true;
+	  return RIGHT;
+	}
       current_direction=BLOCKED;
       return STOP;
     }
-       
+  if (RandTurn)
+    {
+      if (rand() % 100) //change if called more (or less) then expected
+	{
+	  RandTurn =false;
+	  current_direction =turn();
+	  return current_direction;
+	}
+    }
 
   //TODO: more interesting planning
   current_direction=FORWARD;
